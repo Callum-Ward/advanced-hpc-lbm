@@ -253,7 +253,7 @@ int propagate(const t_param params, t_speed* cells, t_speed* tmp_cells)
       /* propagate densities from neighbouring cells, following
       ** appropriate directions of travel and writing into
       ** scratch space grid */
-     
+
       tmp_cells[index].speeds[0] = cells[index].speeds[0]; /* central cell, no movement */
       tmp_cells[index].speeds[1] = cells[x_w + jjnx].speeds[1];                     /* east */
       tmp_cells[index].speeds[2] = cells[ii + y_s * params.nx].speeds[2];           /* north */
@@ -311,24 +311,27 @@ int collision(const t_param params, t_speed* cells, t_speed* tmp_cells, int* obs
   {
     for (int ii = 0; ii < params.nx; ii++)
     {
+      int index = ii + jj*params.nx;
+
       /* don't consider occupied cells */
-      if (!obstacles[ii + jj*params.nx])
+      if (!obstacles[index])
       {
         /* compute local density total */
         float local_density = 0.f;
+        
 
         for (int kk = 0; kk < NSPEEDS; kk++)
         {
-          local_density += tmp_cells[ii + jj*params.nx].speeds[kk];
+          local_density += tmp_cells[index].speeds[kk];
         }
 
         /* compute x velocity component */
-        float u_x = (tmp_cells[ii + jj*params.nx].speeds[1]
-                      + tmp_cells[ii + jj*params.nx].speeds[5]
-                      + tmp_cells[ii + jj*params.nx].speeds[8]
-                      - (tmp_cells[ii + jj*params.nx].speeds[3]
-                         + tmp_cells[ii + jj*params.nx].speeds[6]
-                         + tmp_cells[ii + jj*params.nx].speeds[7]))
+        float u_x = (tmp_cells[index].speeds[1]
+                      + tmp_cells[index].speeds[5]
+                      + tmp_cells[index].speeds[8]
+                      - (tmp_cells[index].speeds[3]
+                         + tmp_cells[index].speeds[6]
+                         + tmp_cells[index].speeds[7]))
                      / local_density;
         /* compute y velocity component */
         float u_y = (tmp_cells[ii + jj*params.nx].speeds[2]
