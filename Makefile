@@ -3,7 +3,7 @@
 EXE=d2q9-bgk
 
 CC=gcc
-CFLAGS= -std=c99 -Wall -O2
+CFLAGS= -std=c99 -Wall -O3
 #CFLAGS= -O3 -std=c99 -mtune=native -march=native -funroll-loops --param=max-unroll-times=4 -ffast-math
 LIBS = -lm
 
