@@ -368,7 +368,7 @@ int collision(const t_param params, t_speed* cells, t_speed* tmp_cells, int* obs
         d_equ[0] = w0 * local_density
                    * (1.f - u_sq / (2.f * c_sq));
         /* axis speeds: weight w1 */
-        d_equ[1] = w1d * (1.f + 3*u[1] + 4*u[1]*u[1] - sub);
+        d_equ[1] = w1d * (1.f + 3*u[1] + 4.5*u[1]*u[1] - sub);
         d_equ[2] = w1d * (1.f + u[2] / c_sq
                                          + (u[2] * u[2]) / (2.f * c_sq * c_sq)
                                          - u_sq / (2.f * c_sq));
