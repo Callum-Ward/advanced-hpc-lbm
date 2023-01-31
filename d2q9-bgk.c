@@ -358,22 +358,24 @@ int collision(const t_param params, t_speed* cells, t_speed* tmp_cells, int* obs
 
         /* equilibrium densities */
         float d_equ[NSPEEDS];
-        float sub = u_sq / (2.f * c_sq);
-        float c_sqsq = 2*c_sq*c_sq;
+
+        float sub = u_sq * 1.5f;
+        float w1d = local_density/9.f;
+
+        //c_sq* = 1/3 1/c_sq = 3
 
         /* zero velocity density: weight w0 */
         d_equ[0] = w0 * local_density
                    * (1.f - u_sq / (2.f * c_sq));
         /* axis speeds: weight w1 */
-        d_equ[1] = w1 * local_density * (1.f + (2*c_sq*u[1] + u[1]*u[1])/c_sqsq 
-                                         - sub);
-        d_equ[2] = w1 * local_density * (1.f + u[2] / c_sq
+        d_equ[1] = w1d * (1.f + 3*u[1] + 4*u[1]*u[1] - sub);
+        d_equ[2] = w1d * (1.f + u[2] / c_sq
                                          + (u[2] * u[2]) / (2.f * c_sq * c_sq)
                                          - u_sq / (2.f * c_sq));
-        d_equ[3] = w1 * local_density * (1.f + u[3] / c_sq
+        d_equ[3] = wd1 * (1.f + u[3] / c_sq
                                          + (u[3] * u[3]) / (2.f * c_sq * c_sq)
                                          - u_sq / (2.f * c_sq));
-        d_equ[4] = w1 * local_density * (1.f + u[4] / c_sq
+        d_equ[4] = w1d * (1.f + u[4] / c_sq
                                          + (u[4] * u[4]) / (2.f * c_sq * c_sq)
                                          - u_sq / (2.f * c_sq));
         /* diagonal speeds: weight w2 */
