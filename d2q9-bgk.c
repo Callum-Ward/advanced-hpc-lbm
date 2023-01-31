@@ -358,13 +358,16 @@ int collision(const t_param params, t_speed* cells, t_speed* tmp_cells, int* obs
 
         /* equilibrium densities */
         float d_equ[NSPEEDS];
+        int sub = u_sq / (2.f * c_sq);
+        int c_sqsq = 2*c_sq*c_sq;
+
         /* zero velocity density: weight w0 */
         d_equ[0] = w0 * local_density
                    * (1.f - u_sq / (2.f * c_sq));
         /* axis speeds: weight w1 */
-        d_equ[1] = w1 * local_density * (1.f + u[1] / c_sq
-                                         + (u[1] * u[1]) / (2.f * c_sq * c_sq)
-                                         - u_sq / (2.f * c_sq));
+        
+        d_equ[1] = w1 * local_density * (1.f + (c_sq*u[1]+0.5*(u[1]*u[1]))/c_sqsq
+                                         - sub);
         d_equ[2] = w1 * local_density * (1.f + u[2] / c_sq
                                          + (u[2] * u[2]) / (2.f * c_sq * c_sq)
                                          - u_sq / (2.f * c_sq));
@@ -391,9 +394,9 @@ int collision(const t_param params, t_speed* cells, t_speed* tmp_cells, int* obs
         /* relaxation step */
         for (int kk = 0; kk < NSPEEDS; kk++)
         {
-          cells[ii + jj*params.nx].speeds[kk] = tmp_cells[ii + jj*params.nx].speeds[kk]
+          cells[index].speeds[kk] = tmp_cells[index].speeds[kk]
                                                   + params.omega
-                                                  * (d_equ[kk] - tmp_cells[ii + jj*params.nx].speeds[kk]);
+                                                  * (d_equ[kk] - tmp_cells[index].speeds[kk]);
         }
       }
     }
