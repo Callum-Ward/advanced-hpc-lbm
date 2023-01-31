@@ -307,6 +307,7 @@ int collision(const t_param params, t_speed* cells, t_speed* tmp_cells, int* obs
   ** NB the collision step is called after
   ** the propagate step and so values of interest
   ** are in the scratch-space grid */
+
   for (int jj = 0; jj < params.ny; jj++)
   {
     for (int ii = 0; ii < params.nx; ii++)
@@ -324,23 +325,24 @@ int collision(const t_param params, t_speed* cells, t_speed* tmp_cells, int* obs
         {
           local_density += tmp_cells[index].speeds[kk];
         }
+        float inv_den = 1 / local_density;
 
         /* compute x velocity component */
-        float u_x = (tmp_cells[index].speeds[1]
+        float u_x = inv_den* (tmp_cells[index].speeds[1]
                       + tmp_cells[index].speeds[5]
                       + tmp_cells[index].speeds[8]
                       - (tmp_cells[index].speeds[3]
                          + tmp_cells[index].speeds[6]
-                         + tmp_cells[index].speeds[7]))
-                     / local_density;
+                         + tmp_cells[index].speeds[7]));
+   
         /* compute y velocity component */
-        float u_y = (tmp_cells[ii + jj*params.nx].speeds[2]
-                      + tmp_cells[ii + jj*params.nx].speeds[5]
-                      + tmp_cells[ii + jj*params.nx].speeds[6]
-                      - (tmp_cells[ii + jj*params.nx].speeds[4]
-                         + tmp_cells[ii + jj*params.nx].speeds[7]
-                         + tmp_cells[ii + jj*params.nx].speeds[8]))
-                     / local_density;
+        float u_y = inv_den* (tmp_cells[index].speeds[2]
+                      + tmp_cells[index].speeds[5]
+                      + tmp_cells[index].speeds[6]
+                      - (tmp_cells[index].speeds[4]
+                         + tmp_cells[index].speeds[7]
+                         + tmp_cells[index].speeds[8]));
+
 
         /* velocity squared */
         float u_sq = u_x * u_x + u_y * u_y;
@@ -360,18 +362,19 @@ int collision(const t_param params, t_speed* cells, t_speed* tmp_cells, int* obs
         float d_equ[NSPEEDS];
 
         float sub = u_sq * 1.5f;
-        float w1d = local_density/9.f;
+        float w0d = local_density* 4.f/9.f ;
+        float w1d = w0d*0.25f;
+        float w2d = w1d*0.25f;
 
         //c_sq* = 1/3 1/c_sq = 3
 
         /* zero velocity density: weight w0 */
-        d_equ[0] = w0 * local_density
-                   * (1.f - u_sq / (2.f * c_sq));
+        d_equ[0] = w0d * local_density * (1.f - 1.5f*u_sq );
         /* axis speeds: weight w1 */
-        d_equ[1] = w1d * (1.f + 3*u[1] + 4.5*u[1]*u[1] - sub);
-        d_equ[2] = w1d * (1.f + 3 * u[2] + 4.5 * u[2] * u[2] - sub);
-        d_equ[3] = w1d * (1.f + 3 * u[3] + 4.5 * u[3] * u[3] - sub);
-        d_equ[4] = w1d * (1.f + 3 * u[4] + 4.5 * u[4] * u[4] - sub);
+        d_equ[1] = w1d * (1.f + 3.f*u[1] + 4.5f*u[1]*u[1] - sub);
+        d_equ[2] = w1d * (1.f + 3.f * u[2] + 4.5f * u[2] * u[2] - sub);
+        d_equ[3] = w1d * (1.f + 3.f * u[3] + 4.5f * u[3] * u[3] - sub);
+        d_equ[4] = w1d * (1.f + 3.f * u[4] + 4.5f * u[4] * u[4] - sub);
         /* diagonal speeds: weight w2 */
         d_equ[5] = w2 * local_density * (1.f + u[5] / c_sq
                                          + (u[5] * u[5]) / (2.f * c_sq * c_sq)
