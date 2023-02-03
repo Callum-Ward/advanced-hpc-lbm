@@ -3,9 +3,9 @@
 EXE=d2q9-bgk
 
 CC=gcc
-#CFLAGS= -std=c99 -Wall -O3
+CFLAGS= -std=c99 -Wall -O3
 #CFLAGS= -O3 -std=c99 -mtune=native -march=native -funroll-loops --param=max-unroll-times=4 -ffast-math
-CFLAGS= -O3 -std=c99 -Ofast -ffast-math
+#CFLAGS= -O3 -std=c99 -Ofast -ffast-math
 LIBS = -lm
 
 FINAL_STATE_FILE=./final_state.dat
