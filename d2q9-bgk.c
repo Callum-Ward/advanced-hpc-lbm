@@ -372,24 +372,7 @@ float collision(const t_param params, t_speed* cells, t_speed* tmp_cells, int* o
         cells[index].speeds[kk] = tmp_cells[index].speeds[kk]
                                                 + params.omega
                                                 * (d_equ[kk] - tmp_cells[index].speeds[kk]);
-        //local_density += cells[index].speeds[kk];
       }
-      // inv_den = 1 / local_density;
-      // u_x = (cells[index].speeds[1]
-      //         + cells[index].speeds[5]
-      //         + cells[index].speeds[8]
-      //         - (cells[index].speeds[3]
-      //             + cells[index].speeds[6]
-      //             + cells[index].speeds[7])) *inv_den;
-            
-      // u_y = (cells[index].speeds[2]
-      //               + cells[index].speeds[5]
-      //               + cells[index].speeds[6]
-      //               - (cells[index].speeds[4]
-      //                   + cells[index].speeds[7]
-      //                   + cells[index].speeds[8])) *inv_den;
-      // tot_u += sqrtf((u_x * u_x) + (u_y * u_y));
-      // ++tot_cells;
     } else {
       cells[index].speeds[1] = tmp_cells[index].speeds[3];
       cells[index].speeds[2] = tmp_cells[index].speeds[4];
@@ -402,7 +385,7 @@ float collision(const t_param params, t_speed* cells, t_speed* tmp_cells, int* o
     } 
   }
 
-  return EXIT_SUCCESS;//tot_u / (float)tot_cells;
+  return EXIT_SUCCESS;
 }
 
 float av_velocity(const t_param params, t_speed* cells, int* obstacles)
