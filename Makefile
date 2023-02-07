@@ -1,11 +1,12 @@
-# Makefile
+#Makefile
 
 EXE=d2q9-bgk
 
 CC=gcc
 CFLAGS= -std=c99 -Wall -O3
-#CFLAGS= -O3 -std=c99 -mtune=native -march=native -funroll-loops --param=max-unroll-times=4 -ffast-math
-#CFLAGS= -O3 -std=c99 -Ofast -ffast-math
+#CFLAGS= -O3 -msse4 -mtune=native -march=native -funroll-loops --param max-unroll-times=4 -ffast-math
+IFLAGS= -O3
+#IFLAGS= -O3 -fast -qopt-prefetch -static
 LIBS = -lm
 
 FINAL_STATE_FILE=./final_state.dat
@@ -18,9 +19,12 @@ all: $(EXE)
 $(EXE): $(EXE).c
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
 
-check:
-	python3 check/check.py --ref-av-vels-file=$(REF_AV_VELS_FILE) --ref-final-state-file=$(REF_FINAL_STATE_FILE) --av-vels-file=$(AV_VELS_FILE) --final-state-file=$(FINAL_STATE_FILE)
+intel: $(EXE).c
+	icc $(IFLAGS) $^ $(LIBS) -o $(EXE)
 
+
+check:
+	python check/check.py --ref-av-vels-file=$(REF_AV_VELS_FILE) --ref-final-state-file=$(REF_FINAL_STATE_FILE) --av-vels-file=$(AV_VELS_FILE) --final-state-file=$(FINAL_STATE_FILE)
 .PHONY: all check clean
 
 clean:
