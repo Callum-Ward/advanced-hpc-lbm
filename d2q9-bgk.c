@@ -517,7 +517,7 @@ int initialise(const char* paramfile, const char* obstaclefile,
   *tmp_cells_ptr = (t_speed*)aligned_alloc(64,sizeof(t_speed) * (params->ny * params->nx));
 
   if (*tmp_cells_ptr == NULL) die("cannot allocate memory for tmp_cells", __LINE__, __FILE__);
-`
+
   /* the map of obstacles */
   *obstacles_ptr = aligned_alloc(64, sizeof(int) * (params->ny * params->nx));
 
