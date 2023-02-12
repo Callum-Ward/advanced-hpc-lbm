@@ -5,8 +5,8 @@ EXE=d2q9-bgk
 CC=gcc
 CFLAGS= -std=c11 -Wall -O3
 #CFLAGS= -O3 -msse4 -mtune=native -march=native -funroll-loops --param max-unroll-times=4 -ffast-math
-IFLAGS= -O3
-#IFLAGS= -O3 -fast -qopt-prefetch -static
+#IFLAGS= -O3
+IFLAGS= -O3 -Ofast
 LIBS = -lm
 
 FINAL_STATE_FILE=./final_state.dat
