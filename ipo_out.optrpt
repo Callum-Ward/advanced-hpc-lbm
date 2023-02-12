@@ -1,0 +1,141 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+
+Begin optimization report for: main(int, char **)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at d2q9-bgk.c(156,3)
+   remark #25460: No loop optimizations reported
+
+   LOOP BEGIN at d2q9-bgk.c(397,3) inlined into d2q9-bgk.c(159,19)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at d2q9-bgk.c(397,3) inlined into d2q9-bgk.c(159,19)
+      remark #15301: SIMD LOOP WAS VECTORIZED
+
+      LOOP BEGIN at d2q9-bgk.c(406,7) inlined into d2q9-bgk.c(159,19)
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at d2q9-bgk.c(397,3) inlined into d2q9-bgk.c(159,19)
+   <Remainder loop for vectorization>
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: timestep(const t_param, t_speed *, t_speed *, int *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at d2q9-bgk.c(215,3) inlined into d2q9-bgk.c(196,3)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(215,3) inlined into d2q9-bgk.c(196,3)
+   remark #15301: SIMD LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(215,3) inlined into d2q9-bgk.c(196,3)
+<Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(243,3) inlined into d2q9-bgk.c(197,3)
+   remark #25460: No loop optimizations reported
+
+   LOOP BEGIN at d2q9-bgk.c(251,5) inlined into d2q9-bgk.c(197,3)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at d2q9-bgk.c(251,5) inlined into d2q9-bgk.c(197,3)
+      remark #15301: SIMD LOOP WAS VECTORIZED
+   LOOP END
+
+   LOOP BEGIN at d2q9-bgk.c(251,5) inlined into d2q9-bgk.c(197,3)
+   <Remainder loop for vectorization>
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: collision(const t_param, t_speed *, t_speed *, int *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at d2q9-bgk.c(292,3)
+   remark #25460: No loop optimizations reported
+
+   LOOP BEGIN at d2q9-bgk.c(296,5)
+      remark #15301: SIMD LOOP WAS VECTORIZED
+
+      LOOP BEGIN at d2q9-bgk.c(305,9)
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(368,9)
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at d2q9-bgk.c(296,5)
+   <Remainder loop for vectorization>
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: calc_reynolds(const t_param, t_speed *, int *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at d2q9-bgk.c(397,3) inlined into d2q9-bgk.c(614,10)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(397,3) inlined into d2q9-bgk.c(614,10)
+   remark #15301: SIMD LOOP WAS VECTORIZED
+
+   LOOP BEGIN at d2q9-bgk.c(406,7) inlined into d2q9-bgk.c(614,10)
+   LOOP END
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(397,3) inlined into d2q9-bgk.c(614,10)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
+
+Begin optimization report for: write_values(const t_param, t_speed *, int *, float *)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at d2q9-bgk.c(652,3)
+   remark #25460: No loop optimizations reported
+
+   LOOP BEGIN at d2q9-bgk.c(654,5)
+      remark #25460: No loop optimizations reported
+
+      LOOP BEGIN at d2q9-bgk.c(667,9)
+      LOOP END
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: initialise(const char *, const char *, t_param *, t_speed **, t_speed **, int **, float **)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at d2q9-bgk.c(500,3)
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(508,3)
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(524,3)
+   remark #25460: No loop optimizations reported
+LOOP END
+===========================================================================
