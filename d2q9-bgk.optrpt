@@ -1,0 +1,242 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 19.1.3.304 Build 20200925_000000
+
+Compiler options: -O3 -xBROADWELL -qopt-report=5 -qopt-report-phase=par -restrict -parallel -lm -qopenmp -o d2q9-bgk
+
+Begin optimization report for: write_values(const t_param, t_speed *__restrict__, int *__restrict__, float *)
+
+    Report from: Auto-parallelization optimizations [par]
+
+
+LOOP BEGIN at d2q9-bgk.c(626,3)
+   remark #17104: loop was not parallelized: existence of parallel dependence
+   remark #17106: parallel dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (662:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (662:7)
+   remark #17106: parallel dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (662:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (662:7)
+
+   LOOP BEGIN at d2q9-bgk.c(628,5)
+      remark #17104: loop was not parallelized: existence of parallel dependence
+      remark #17106: parallel dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (662:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (662:7)
+      remark #17106: parallel dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (662:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (662:7)
+   LOOP END
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(675,3)
+   remark #17104: loop was not parallelized: existence of parallel dependence
+   remark #17106: parallel dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (677:5) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (677:5)
+   remark #17106: parallel dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (677:5) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (677:5)
+LOOP END
+===========================================================================
+
+Begin optimization report for: timestep(const t_param, t_speed *__restrict__, t_speed *__restrict__, int *__restrict__)
+
+    Report from: Auto-parallelization optimizations [par]
+
+
+LOOP BEGIN at d2q9-bgk.c(215,1)
+   remark #17104: loop was not parallelized: existence of parallel dependence
+   remark #17106: parallel dependence: assumed OUTPUT dependence between at (303:9) and at (303:9)
+   remark #17106: parallel dependence: assumed OUTPUT dependence between at (303:9) and at (303:9)
+
+   LOOP BEGIN at d2q9-bgk.c(218,5)
+   <Peeled, Distributed chunk1>
+      remark #17104: loop was not parallelized: existence of parallel dependence
+      remark #17106: parallel dependence: assumed OUTPUT dependence between at (303:9) and at (303:9)
+      remark #17106: parallel dependence: assumed OUTPUT dependence between at (303:9) and at (303:9)
+      remark #17106: parallel dependence: assumed OUTPUT dependence between at (304:9) and at (304:9)
+      remark #17106: parallel dependence: assumed OUTPUT dependence between at (304:9) and at (304:9)
+      remark #17106: parallel dependence: assumed ANTI dependence between at (303:9) and at (303:9)
+      remark #17106: parallel dependence: assumed FLOW dependence between at (303:9) and at (303:9)
+      remark #17106: parallel dependence: assumed FLOW dependence between at (303:9) and at (303:9)
+      remark #17106: parallel dependence: assumed ANTI dependence between at (303:9) and at (303:9)
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Distributed chunk1>
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Remainder loop for vectorization, Distributed chunk1>
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Remainder loop for vectorization, Distributed chunk1>
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Distributed chunk2>
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Remainder loop for vectorization, Distributed chunk2>
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Distributed chunk2>
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Remainder loop for vectorization, Distributed chunk2>
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Distributed chunk2>
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Remainder loop for vectorization, Distributed chunk2>
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Distributed chunk2>
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Remainder loop for vectorization, Distributed chunk2>
+      LOOP END
+
+      LOOP BEGIN at d2q9-bgk.c(218,5)
+      <Peeled, Distributed chunk3>
+      LOOP END
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: initialise(const char *__restrict__, const char *__restrict__, t_param *, t_speed **__restrict__, t_speed **__restrict__, int **__restrict__, float **__restrict__)
+
+    Report from: Auto-parallelization optimizations [par]
+
+
+LOOP BEGIN at d2q9-bgk.c(473,3)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(473,3)
+   remark #17108: loop was not parallelized: insufficient computational work
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(473,3)
+<Remainder loop for vectorization>
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(506,3)
+   remark #17102: loop was not parallelized: not a parallelization candidate
+LOOP END
+===========================================================================
+
+Begin optimization report for: main(int, char **)
+
+    Report from: Auto-parallelization optimizations [par]
+
+
+LOOP BEGIN at d2q9-bgk.c(111,3)
+   remark #17104: loop was not parallelized: existence of parallel dependence
+   remark #17106: parallel dependence: assumed FLOW dependence between params (113:5) and params.nx (158:20)
+   remark #17106: parallel dependence: assumed ANTI dependence between params.nx (158:20) and params (113:5)
+
+   LOOP BEGIN at d2q9-bgk.c(160,3) inlined into d2q9-bgk.c(113,5)
+      remark #17104: loop was not parallelized: existence of parallel dependence
+      remark #17106: parallel dependence: assumed OUTPUT dependence between *(cells->speed1+(ii+jj*params.nx)*4) (167:7) and *(cells->speed7+(ii+jj*params.nx)*4) (173:7)
+      remark #17106: parallel dependence: assumed OUTPUT dependence between *(cells->speed7+(ii+jj*params.nx)*4) (173:7) and *(cells->speed1+(ii+jj*params.nx)*4) (167:7)
+   LOOP END
+
+   LOOP BEGIN at d2q9-bgk.c(160,3) inlined into d2q9-bgk.c(113,5)
+   <Remainder loop for vectorization>
+   LOOP END
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(320,3) inlined into d2q9-bgk.c(139,41)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(320,3) inlined into d2q9-bgk.c(139,41)
+   remark #17108: loop was not parallelized: insufficient computational work
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(320,3) inlined into d2q9-bgk.c(139,41)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
+
+Begin optimization report for: accelerate_flow(const t_param, t_speed *__restrict__, int *__restrict__)
+
+    Report from: Auto-parallelization optimizations [par]
+
+
+LOOP BEGIN at d2q9-bgk.c(160,3)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(160,3)
+   remark #17104: loop was not parallelized: existence of parallel dependence
+   remark #17106: parallel dependence: assumed OUTPUT dependence between *(cells->speed1+(ii+jj*params.nx)*4) (167:7) and *(cells->speed7+(ii+jj*params.nx)*4) (173:7)
+   remark #17106: parallel dependence: assumed OUTPUT dependence between *(cells->speed7+(ii+jj*params.nx)*4) (173:7) and *(cells->speed1+(ii+jj*params.nx)*4) (167:7)
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(160,3)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
+
+Begin optimization report for: av_velocity(const t_param, t_speed *__restrict__, int *__restrict__)
+
+    Report from: Auto-parallelization optimizations [par]
+
+
+LOOP BEGIN at d2q9-bgk.c(320,3)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(320,3)
+   remark #17108: loop was not parallelized: insufficient computational work
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(320,3)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
+
+Begin optimization report for: calc_reynolds(const t_param, t_speed *__restrict__, int *__restrict__)
+
+    Report from: Auto-parallelization optimizations [par]
+
+
+LOOP BEGIN at d2q9-bgk.c(320,3) inlined into d2q9-bgk.c(583,10)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(320,3) inlined into d2q9-bgk.c(583,10)
+   remark #17108: loop was not parallelized: insufficient computational work
+LOOP END
+
+LOOP BEGIN at d2q9-bgk.c(320,3) inlined into d2q9-bgk.c(583,10)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
+
+Begin optimization report for: total_density(const t_param, t_speed *__restrict__)
+
+    Report from: Auto-parallelization optimizations [par]
+
+
+LOOP BEGIN at d2q9-bgk.c(590,3)
+   remark #17108: loop was not parallelized: insufficient computational work
+
+   LOOP BEGIN at d2q9-bgk.c(592,5)
+   <Peeled loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at d2q9-bgk.c(592,5)
+      remark #17108: loop was not parallelized: insufficient computational work
+   LOOP END
+
+   LOOP BEGIN at d2q9-bgk.c(592,5)
+   <Remainder loop for vectorization>
+   LOOP END
+
+   LOOP BEGIN at d2q9-bgk.c(592,5)
+   <Remainder loop for vectorization>
+   LOOP END
+LOOP END
+===========================================================================

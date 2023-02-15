@@ -1,54 +1,3 @@
-/*
-** Code to implement a d2q9-bgk lattice boltzmann scheme.
-** 'd2' inidates a 2-dimensional grid, and
-** 'q9' indicates 9 velocities per grid cell.
-** 'bgk' refers to the Bhatnagar-Gross-Krook collision step.
-**
-** The 'speeds' in each cell are numbered as follows:
-**
-** 6 2 5
-**  \|/
-** 3-0-1
-**  /|\
-** 7 4 8
-**
-** A 2D grid:
-**
-**           cols
-**       --- --- ---
-**      | D | E | F |
-** rows  --- --- ---
-**      | A | B | C |
-**       --- --- ---
-**
-** 'unwrapped' in row major order to give a 1D array:
-**
-**  --- --- --- --- --- ---
-** | A | B | C | D | E | F |
-**  --- --- --- --- --- ---
-**
-** Grid indicies are:
-**
-**          ny
-**          ^       cols(ii)
-**          |  ----- ----- -----
-**          | | ... | ... | etc |
-**          |  ----- ----- -----
-** rows(jj) | | 1,0 | 1,1 | 1,2 |
-**          |  ----- ----- -----
-**          | | 0,0 | 0,1 | 0,2 |
-**          |  ----- ----- -----
-**          ----------------------> nx
-**
-** Note the names of the input parameter and obstacle files
-** are passed on the command line, e.g.:
-**
-**   ./d2q9-bgk input.params obstacles.dat
-**
-** Be sure to adjust the grid dimensions in the parameter file
-** if you choose a different obstacle file.
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -161,6 +110,7 @@ int main(int argc, char *argv[])
   comp_tic = init_toc;
   for (int tt = 0; tt < params.maxIters; tt++)
   {
+    accelerate_flow(params, cells, obstacles);
     av_vels[tt] = timestep(params, cells, tmp_cells, obstacles);
     t_speed *old = cells; // keep pointer to avoid leak
     cells = tmp_cells;
@@ -195,16 +145,6 @@ int main(int argc, char *argv[])
   finalise(&params, &cells, &tmp_cells, &obstacles, &av_vels);
 
   return EXIT_SUCCESS;
-}
-
-float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles)
-{
-
-  accelerate_flow(params, cells, obstacles);
-  // propagate(params, cells, tmp_cells);
-  // rebound(params, cells, tmp_cells, obstacles);
-
-  return collision(params, cells, tmp_cells, obstacles);
 }
 
 int accelerate_flow(const t_param params, t_speed *restrict cells, int *restrict obstacles)
@@ -243,14 +183,9 @@ const float w0 = 4.f / 9.f;   /* weighting factor */
 const float w1 = 1.f / 9.f;   /* weighting factor */
 const float w2 = 1.f / 36.f;  /* weighting factor */
 
-float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles)
+float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles)
 {
 
-  /* loop over the cells in the grid
-  ** NB the collision step is called after
-  ** the propagate step and so values of interest
-  ** are in the scratch-space grid */
-  float local_density;
   float tot_u = 0.f;
   unsigned int tot_cells = 0;
 
@@ -264,7 +199,6 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
   __assume_aligned(cells->speed6, 64);
   __assume_aligned(cells->speed7, 64);
   __assume_aligned(cells->speed8, 64);
-
   __assume_aligned(tmp_cells->speed0, 64);
   __assume_aligned(tmp_cells->speed1, 64);
   __assume_aligned(tmp_cells->speed2, 64);
@@ -278,12 +212,11 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
   __assume((params.ny) % 2 == 0);
 
   // reduction(+ : tot_cells, tot_u)
+#pragma omp parallel for reduction(+:tot_cells,tot_u)
   for (int jj = 0; jj < params.ny; jj++)
   {
-#pragma omp simd
     for (int ii = 0; ii < params.nx; ii++)
     {
-
       int y_n = (jj == params.ny - 1) ? (0) : jj + 1;
       int y_s = (jj == 0) ? (jj + params.ny - 1) : (jj - 1);
       int x_e = (ii == params.nx - 1) ? (0) : (ii + 1);
@@ -373,6 +306,7 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
     }
   }
   return tot_u / (float)tot_cells;
+
 }
 
 float av_velocity(const t_param params, t_speed *restrict cells, int *restrict obstacles)
