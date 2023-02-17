@@ -12,13 +12,13 @@
 /* struct to hold the parameter values */
 typedef struct
 {
-  int nx;           /* no. of cells in x-direction */
-  int ny;           /* no. of cells in y-direction */
-  int maxIters;     /* no. of iterations */
+  const int nx;           /* no. of cells in x-direction */
+  const int ny;           /* no. of cells in y-direction */
+  const int maxIters;     /* no. of iterations */
   int reynolds_dim; /* dimension for Reynolds number */
-  float density;    /* density per link */
-  float accel;      /* density redistribution */
-  float omega;      /* relaxation parameter */
+  const float density;    /* density per link */
+  const float accel;      /* density redistribution */
+  const float omega;      /* relaxation parameter */
 } t_param;
 
 /* struct to hold the 'speed' values */
@@ -210,11 +210,14 @@ float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict 
   __assume_aligned(tmp_cells->speed8, 64);
   __assume((params.nx) % 2 == 0);
   __assume((params.ny) % 2 == 0);
+  __assume(params.nx <= 1024);
+   __assume(params.ny <= 1024);  
 
   // reduction(+ : tot_cells, tot_u)
-#pragma omp parallel for reduction(+:tot_cells,tot_u)
+#pragma omp parallel for num_threads(21) reduction(+:tot_cells,tot_u) 
   for (int jj = 0; jj < params.ny; jj++)
   {
+#pragma omp simd reduction(+ : tot_cells, tot_u)
     for (int ii = 0; ii < params.nx; ii++)
     {
       int y_n = (jj == params.ny - 1) ? (0) : jj + 1;
@@ -226,16 +229,17 @@ float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict 
       __assume(x_e < params.nx);
       __assume(y_s < params.ny);
       __assume(x_w < params.nx);
-      register float speed5 = cells->speed5[x_w + y_s * params.nx]; /* north-east */
-      register float speed2 = cells->speed2[ii + y_s * params.nx];  /* north */
-      register float speed6 = cells->speed6[x_e + y_s * params.nx]; /* north-west */
-      register float speed1 = cells->speed1[x_w + jj * params.nx];  /* east */
-      register float speed0 = cells->speed0[ii + jj * params.nx];   /* central cell, no movement */
-      register float speed3 = cells->speed3[x_e + jj * params.nx];  /* west */
-      register float speed8 = cells->speed8[x_w + y_n * params.nx]; /* south-east */
-      register float speed4 = cells->speed4[ii + y_n * params.nx];  /* south */
-      register float speed7 = cells->speed7[x_e + y_n * params.nx]; /* south-west */
 
+
+      register float speed0 = cells->speed0[ii + jj * params.nx]; /* central cell, no movement */
+      register float speed1 = cells->speed1[x_w + jj * params.nx]; /* east */
+      register float speed2 = cells->speed2[ii + y_s * params.nx]; /* north */
+      register float speed3 = cells->speed3[x_e + jj * params.nx]; /* west */
+      register float speed4 = cells->speed4[ii + y_n * params.nx]; /* south */
+      register float speed5 = cells->speed5[x_w + y_s * params.nx]; /* north-east */
+      register float speed6 = cells->speed6[x_e + y_s * params.nx]; /* north-west */
+      register float speed7 = cells->speed7[x_e + y_n * params.nx]; /* south-west */
+      register float speed8 = cells->speed8[x_w + y_n * params.nx]; /* south-east */
       /* don't consider occupied cells */
       if (obstacles[ii + jj * params.nx])
       {

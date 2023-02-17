@@ -2,7 +2,7 @@
 
 #SBATCH --job-name d2q9-bgk
 #SBATCH --nodes 1
-#SBATCH --ntasks-per-node 14
+#SBATCH --ntasks-per-node 28
 #SBATCH --time 01:20:00
 #SBATCH --partition=teach_cpu
 #SBATCH --account=COSC028844
@@ -16,7 +16,7 @@ echo Slurm job ID is $SLURM_JOB_ID
 echo This job runs on the following machines:
 echo `echo $SLURM_JOB_NODELIST | uniq`
 
-OMP_NUM_THREADS=16
+OMP_NUM_THREADS=24
 
 #! Run the executable
 #valgrind --tool=cachegrind ./d2q9-bgk input_256x256.params obstacles_256x256.dat
