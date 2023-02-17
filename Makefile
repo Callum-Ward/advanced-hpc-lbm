@@ -7,14 +7,14 @@ CC=gcc
 CFLAGS= -std=c11 -Wall -O3 -msse4 -mtune=native -march=native -funroll-loops --param max-unroll-times=4 -ffast-math
 #CFLAGS= -O3 -msse4 -mtune=native -march=native -funroll-loops --param max-unroll-times=4 -ffast-math
 #IFLAGS= -O3
-IFLAGS= -O3 -xBROADWELL -qopt-report=5 -qopt-report-phase=vec -restrict
+IFLAGS= -O3 -xBROADWELL -qopt-report=5 -qopt-report-phase=par -restrict
 LIBS = -lm
 ILIBS = -lm -qopenmp
 
 FINAL_STATE_FILE=./final_state.dat
 AV_VELS_FILE=./av_vels.dat
-REF_FINAL_STATE_FILE=check/128x128.final_state.dat
-REF_AV_VELS_FILE=check/128x128.av_vels.dat
+REF_FINAL_STATE_FILE=check/256x256.final_state.dat
+REF_AV_VELS_FILE=check/256x256.av_vels.dat
 
 all: $(EXE)
 

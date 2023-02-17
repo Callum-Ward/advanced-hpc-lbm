@@ -7,7 +7,7 @@
 #SBATCH --partition=teach_cpu
 #SBATCH --account=COSC028844
 #SBATCH --output d2q9-bgk.out
-#SBATCH --exclusive 
+#SBATCH --exclusive
 
 echo Running on host `hostname`
 echo Time is `date`
@@ -16,7 +16,9 @@ echo Slurm job ID is $SLURM_JOB_ID
 echo This job runs on the following machines:
 echo `echo $SLURM_JOB_NODELIST | uniq`
 
-OMP_NUM_THREADS=24
+export OMP_NUM_THREADS=28
+export OMP_PROC_BIND=close
+
 
 #! Run the executable
 #valgrind --tool=cachegrind ./d2q9-bgk input_256x256.params obstacles_256x256.dat
