@@ -1,0 +1,9 @@
+loop_begin "/user/home/ke19697/par/advanced-hpc-lbm/d2q9-bgk" 0x31b1 3 0x0
+loop_end "/user/home/ke19697/par/advanced-hpc-lbm/d2q9-bgk" 0x36dc 3 0x0
+
+loop_begin "/user/home/ke19697/par/advanced-hpc-lbm/d2q9-bgk" 0x3906 5 0x0
+loop_end "/user/home/ke19697/par/advanced-hpc-lbm/d2q9-bgk" 0x3c64 5 0x0
+
+loop_begin "/user/home/ke19697/par/advanced-hpc-lbm/d2q9-bgk" 0x40dc 7 0x0
+loop_end "/user/home/ke19697/par/advanced-hpc-lbm/d2q9-bgk" 0x4218 7 0x0
+

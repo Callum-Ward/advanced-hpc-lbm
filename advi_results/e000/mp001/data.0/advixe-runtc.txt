@@ -1,0 +1,30 @@
+
+=== Start: [2023/03/04 11:32:25] === 
+Analysis started...
+Result file: /user/home/ke19697/par/advanced-hpc-lbm/advi_results/e000/mp001/mp001.advixe 
+Found target process /user/home/ke19697/par/advanced-hpc-lbm/d2q9-bgk (PID = 4217). Analysis started... 
+Loaded module: /user/home/ke19697/par/advanced-hpc-lbm/d2q9-bgk. 
+Loaded module: /lib64/ld-linux-x86-64.so.2. 
+Loaded module: [vdso]. 
+Loaded module: /lib64/libm.so.6. 
+Loaded module: /mnt/storage/software/languages/intel/intel-parallel_studio_xe_2020_u4/compilers_and_libraries_2020.4.304/linux/compiler/lib/intel64_lin/libiomp5.so. 
+Loaded module: /mnt/storage/software/languages/gcc-10.4.0/lib64/libgcc_s.so.1. 
+Loaded module: /lib64/libpthread.so.0. 
+Loaded module: /lib64/libc.so.6. 
+Loaded module: /lib64/libdl.so.2. 
+Loaded module: /mnt/storage/software/languages/intel/intel-parallel_studio_xe_2020_u4/advisor_2020.3.0.607294/lib64/runtime/libittnotify.so. 
+Unloaded module: /user/home/ke19697/par/advanced-hpc-lbm/d2q9-bgk. 
+Unloaded module: /lib64/ld-linux-x86-64.so.2. 
+Unloaded module: [vdso]. 
+Unloaded module: /lib64/libm.so.6. 
+Unloaded module: /mnt/storage/software/languages/intel/intel-parallel_studio_xe_2020_u4/compilers_and_libraries_2020.4.304/linux/compiler/lib/intel64_lin/libiomp5.so. 
+Unloaded module: /mnt/storage/software/languages/gcc-10.4.0/lib64/libgcc_s.so.1. 
+Unloaded module: /lib64/libpthread.so.0. 
+Unloaded module: /lib64/libc.so.6. 
+Unloaded module: /lib64/libdl.so.2. 
+Unloaded module: /mnt/storage/software/languages/intel/intel-parallel_studio_xe_2020_u4/advisor_2020.3.0.607294/lib64/runtime/libittnotify.so. 
+Process /user/home/ke19697/par/advanced-hpc-lbm/d2q9-bgk (PID = 4217) has terminated. 
+Application exit code: 0 
+Result file: /user/home/ke19697/par/advanced-hpc-lbm/advi_results/e000/mp001/mp001.advixe 
+Analysis completed
+=== End: [2023/03/04 11:33:44] === 

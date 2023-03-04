@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- <!DOCTYPE IntelParallelAdvisorSummaryCollection SYSTEM  "IntelParallelAdvisorSummaryCollection.dtd"> -->
+
+<IntelParallelAdvisorSummary version="0.1" 
+                             kind="DATAKIND_MAP" >
+
+  <site filename=""
+        line_no="0"
+        label="loop_site_3" 
+        loop_name="collision" 
+        is_vectorized="-1">
+    <strides unit="91"
+             const="0"
+             variable="3" />
+  </site>
+
+  <site filename=""
+        line_no="0"
+        label="loop_site_5" 
+        loop_name="collision" 
+        is_vectorized="-1">
+    <strides unit="65"
+             const="0"
+             variable="3" />
+  </site>
+
+  <site filename=""
+        line_no="0"
+        label="loop_site_7" 
+        loop_name="write_values" 
+        is_vectorized="-1">
+    <strides unit="24"
+             const="0"
+             variable="6" />
+  </site>
+
+</IntelParallelAdvisorSummary >
