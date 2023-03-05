@@ -7,7 +7,7 @@ CC=gcc
 CFLAGS= -std=c11 -Wall -O3 -msse4 -mtune=native -march=native -funroll-loops --param max-unroll-times=4 -ffast-math
 #CFLAGS= -O3 -msse4 -mtune=native -march=native -funroll-loops --param max-unroll-times=4 -ffast-math
 #IFLAGS= -O3
-IFLAGS= -O3 -xBROADWELL -restrict
+IFLAGS= -O3 -xBROADWELL
 LIBS = -lm
 ILIBS = -lm -qopenmp -fma
 

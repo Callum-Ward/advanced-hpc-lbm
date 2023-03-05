@@ -240,13 +240,13 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
 #pragma omp parallel for reduction(+ : tot_u) schedule(static) 
   for (int jj = 0; jj < params.ny; jj++)
   {
-    
     const int y_n = (jj == params.ny - 1) ? (0) : jj + 1;
     const int y_s = (jj == 0) ? (jj + params.ny - 1) : (jj - 1);
 
    #pragma omp simd reduction(+ : tot_u) 
     for (int ii = 0; ii < params.nx; ii++)
     {
+
       register const int x_e = (ii == params.nx - 1) ? (0) : (ii + 1);
       register const int x_w = (ii == 0) ? (ii + params.nx - 1) : (ii - 1);
       register float speed5 = cells->speed5[x_w + y_s * params.nx]; /* north-east */
@@ -492,11 +492,10 @@ int initialise(const char *restrict paramfile, const char *restrict obstaclefile
   float w1 = params->density / 9.f;
   float w2 = params->density / 36.f;
 
- 
-#pragma omp parallel for schedule(static)
+#pragma omp parallel for schedule(static) 
   for (int jj = 0; jj < params->ny; jj++) {
-    #pragma omp simd
     for (int ii = 0; ii < params->nx; ii++) {
+
       /* centre */
       (*cells_ptr)->speed0[ii + jj * params->nx] = w0;
       /* axis directions */
@@ -514,13 +513,15 @@ int initialise(const char *restrict paramfile, const char *restrict obstaclefile
       /* first set all cells in obstacle array to zero */
     }
   }
-      /* open the obstacle data file */
-      fp = fopen(obstaclefile, "r");
+  printf(" \n");
 
-      if (fp == NULL)
-      {
-        sprintf(message, "could not open input obstacles file: %s", obstaclefile);
-        die(message, __LINE__, __FILE__);
+  /* open the obstacle data file */
+  fp = fopen(obstaclefile, "r");
+
+  if (fp == NULL)
+  {
+    sprintf(message, "could not open input obstacles file: %s", obstaclefile);
+    die(message, __LINE__, __FILE__);
       }
 
       /* read-in the blocked cells list */
