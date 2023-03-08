@@ -2,27 +2,22 @@
 
 EXE=d2q9-bgk
 
-CC=gcc
-#CFLAGS= -std=c11 -Wall -O3
-CFLAGS= -std=c11 -Wall -O3 -msse4 -mtune=native -march=native -funroll-loops --param max-unroll-times=4 -ffast-math
-#CFLAGS= -O3 -msse4 -mtune=native -march=native -funroll-loops --param max-unroll-times=4 -ffast-math
-#IFLAGS= -O3
-IFLAGS= -O3 -xBROADWELL
+CC=icc
+
+IFLAGS= -O3 -xBROADWELL -Ofast -restrict
 LIBS = -lm
-ILIBS = -lm -qopenmp -fma
+ILIBS = -lm -qopenmp
 
 FINAL_STATE_FILE=./final_state.dat
 AV_VELS_FILE=./av_vels.dat
-REF_FINAL_STATE_FILE=check/1024x1024.final_state.dat
-REF_AV_VELS_FILE=check/1024x1024.av_vels.dat
+REF_FINAL_STATE_FILE=check/128x256.final_state.dat
+REF_AV_VELS_FILE=check/128x256.av_vels.dat
 
 all: $(EXE)
 
 $(EXE): $(EXE).c
-	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
+	$(CC) $(IFLAGS) $^ $(ILIBS) -o $@
 
-intel: $(EXE).c
-	icc $(IFLAGS) $^ $(ILIBS) -o $(EXE)
 
 
 check:

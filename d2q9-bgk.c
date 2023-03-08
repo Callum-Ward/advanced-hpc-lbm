@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
   t_speed *cells = NULL;                                                             /* grid containing fluid densities */
   t_speed *tmp_cells = NULL;                                                         /* scratch space */
   int *obstacles = NULL;
-  int obsCount;                                                             /* grid indicating which cells are blocked */
+  int obsCount =0;                                                             /* grid indicating which cells are blocked */
   float *av_vels = NULL;                                                             /* a record of the av. velocity computed for each timestep */
   struct timeval timstr;                                                             /* structure to hold elapsed time */
   double tot_tic, tot_toc, init_tic, init_toc, comp_tic, comp_toc, col_tic, col_toc; /* floating point numbers to calculate elapsed wallclock time */
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
   tot_tic = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
   init_tic = tot_tic;
   initialise(paramfile, obstaclefile, &params, &cells, &tmp_cells, &obstacles, &av_vels);
-  for (int obs = 0; obs < params.ny * params.nx; obs++)if (obstacles[obs]) obsCount++;
+  for (int obs = 0; obs < params.ny * params.nx; obs++) if (!obstacles[obs]) obsCount++;
 
   /* Init time stops here, compute time starts*/
   gettimeofday(&timstr, NULL);
@@ -237,7 +237,7 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
 
 
 #pragma vector aligned
-#pragma omp parallel for reduction(+ : tot_u) schedule(static) 
+#pragma omp parallel for reduction(+ : tot_u)
   for (int jj = 0; jj < params.ny; jj++)
   {
     const int y_n = (jj == params.ny - 1) ? (0) : jj + 1;
@@ -492,7 +492,7 @@ int initialise(const char *restrict paramfile, const char *restrict obstaclefile
   float w1 = params->density / 9.f;
   float w2 = params->density / 36.f;
 
-#pragma omp parallel for schedule(static) 
+#pragma omp parallel for 
   for (int jj = 0; jj < params->ny; jj++) {
     for (int ii = 0; ii < params->nx; ii++) {
 
