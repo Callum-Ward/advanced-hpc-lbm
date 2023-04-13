@@ -2,12 +2,12 @@
 
 EXE=d2q9-bgk
 
-CC=gcc
+CC=mpiicc
 #CFLAGS= -std=c11 -Wall -O3
 CFLAGS= -std=c11 -Wall -O3 -msse4 -mtune=native -march=native -funroll-loops --param max-unroll-times=4 -ffast-math
 #CFLAGS= -O3 -msse4 -mtune=native -march=native -funroll-loops --param max-unroll-times=4 -ffast-math
 #IFLAGS= -O3
-IFLAGS= -O3 -xBROADWELL -qopt-report=5 -qopt-report-phase=vec -restrict
+IFLAGS= -O3 -xBROADWELL -restrict
 LIBS = -lm
 
 FINAL_STATE_FILE=./final_state.dat
@@ -18,10 +18,10 @@ REF_AV_VELS_FILE=check/128x128.av_vels.dat
 all: $(EXE)
 
 $(EXE): $(EXE).c
-	$(CC) $(CFLAGS) $^ $(LIBS) -o $@
+	$(CC) $(IFLAGS) $^ $(LIBS) -o $@
 
-intel: $(EXE).c
-	icc $(IFLAGS) $^ $(LIBS) -o $(EXE)
+test:
+	mpiicc $(IFLAGS) test.c $(LIBS) -o test
 
 
 check:
@@ -30,3 +30,6 @@ check:
 
 clean:
 	rm -f $(EXE)
+
+cleant:
+	rm -f test

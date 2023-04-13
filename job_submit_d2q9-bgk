@@ -1,13 +1,16 @@
 #!/bin/bash
 
 #SBATCH --job-name d2q9-bgk
-#SBATCH --nodes 1
-#SBATCH --ntasks-per-node 14
+#SBATCH --nodes 2
+#SBATCH --ntasks-per-node 4
 #SBATCH --time 01:20:00
 #SBATCH --partition=teach_cpu
 #SBATCH --account=COSC028844
 #SBATCH --output d2q9-bgk.out
 #SBATCH --exclusive 
+
+
+//export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
 
 echo Running on host `hostname`
 echo Time is `date`
@@ -18,8 +21,10 @@ echo `echo $SLURM_JOB_NODELIST | uniq`
 
 #! Run the executable
 #valgrind --tool=cachegrind ./d2q9-bgk input_256x256.params obstacles_256x256.dat
-./d2q9-bgk input_128x128.params obstacles_128x128.dat
+mpirun ./d2q9-bgk ~/advanced-hpc-lbm/input_128x128.params  ~/advanced-hpc-lbm/obstacles_128x128.dat
+#mpirun -np 4 ./test
+#./test
 #/a.out input_128x128.params obstacles_128x128.dat
-#./d2q9-bgk input_128x256.params obstacles_128x256.dat
+#./d2q9-bgk input_128x2que56.params obstacles_128x256.dat
 #./d2q9-bgk input_256x256.params obstacles_256x256.dat
 #./d2q9-bgk input_1024x1024.params obstacles_1024x1024.dat
