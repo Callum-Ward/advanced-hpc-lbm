@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --job-name d2q9-bgk
-#SBATCH --nodes 1
-#SBATCH --ntasks-per-node 8
+#SBATCH --nodes 4
+####SBATCH --ntasks-per-node 5
 #SBATCH --time 01:20:00
 #SBATCH --partition=teach_cpu
 #SBATCH --account=COSC028844
@@ -21,9 +21,9 @@ echo `echo $SLURM_JOB_NODELIST | uniq`
 
 #! Run the executable
 #valgrind --tool=cachegrind ./d2q9-bgk input_256x256.params obstacles_256x256.dat
-mpirun ./d2q9-bgk ~/advanced-hpc-lbm/input_128x128.params  ~/advanced-hpc-lbm/obstacles_128x128.dat
-#mpirun ./d2q9-bgk ~/advanced-hpc-lbm/input_128x256.params  ~/advanced-hpc-lbm/obstacles_128x256.dat
-#mpirun ./d2q9-bgk ~/advanced-hpc-lbm/input_256x256.params  ~/advanced-hpc-lbm/obstacles_256x256.dat
+mpirun -np 42 ./d2q9-bgk ~/advanced-hpc-lbm/input_128x128.params  ~/advanced-hpc-lbm/obstacles_128x128.dat
+#mpirun -np 8 ./d2q9-bgk ~/advanced-hpc-lbm/input_128x256.params  ~/advanced-hpc-lbm/obstacles_128x256.dat
+#mpirun -np 86 ./d2q9-bgk ~/advanced-hpc-lbm/input_256x256.params  ~/advanced-hpc-lbm/obstacles_256x256.dat
 #mpirun ./d2q9-bgk ~/advanced-hpc-lbm/input_1024x1024.params  ~/advanced-hpc-lbm/obstacles_1024x1024.dat
 #mpirun -np 4 ./test
 #./test
