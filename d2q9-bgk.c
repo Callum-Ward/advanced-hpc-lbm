@@ -57,9 +57,9 @@ int initialise(const char *restrict paramfile, const char *restrict obstaclefile
 ** accelerate_flow(), propagate(), rebound() & collision()
 */
 void get_rank_sizes(const int rank, const int size,const int rows, rank_props *work);
-float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank);
-int accelerate_flow(const t_param params, t_speed *restrict cells, int *restrict obstacles, rank_props *rank_p, int rank);
-float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank);
+float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt);
+int accelerate_flow(const t_param params, t_speed *restrict cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt);
+float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt);
 int write_values(const t_param params,float *restrict cells, int *restrict obstacles, float *restrict av_vels, rank_props *rank_p);
 
 /* finalise, including freeing up allocated memory */
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
   //printf("my rank: %d start: %d end: %d left: %d right: %d\n", rank, rank_p[rank].start_row, rank_p[rank].end_row, left, right);
   //printf("rank %d init complete\n",rank);
   //printf(" 1 cells->speed0[0]=%f\n",cells->speed0[0]);
-  printf("rank %d start %d end %d \n", rank, rank_p[rank].start_row, rank_p[rank].end_row);
+  //printf("rank %d start %d end %d \n", rank, rank_p[rank].start_row, rank_p[rank].end_row);
 
   int odd_rank = (rank%2 == 0) ? 0 : 1;
   int even_size = ((size-1)%2 == 0) ? 1 : 0;
@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
   for (int tt = 0; tt < params.maxIters; tt++)
   {
 
-    av_vals[tt] = timestep(params, cells, tmp_cells, obstacles, rank_p, rank) / tot_obs;    
+    av_vals[tt] = timestep(params, cells, tmp_cells, obstacles, rank_p, rank, tt) / tot_obs;    
     old = cells; // keep pointer to avoid leak
     cells = tmp_cells;
     tmp_cells = old;
@@ -356,14 +356,31 @@ void get_rank_sizes(const int rank, const int size, const int tot_rows, rank_pro
    
 }
 
-float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank)
+float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt)
 {
-  if (rank_p[rank].start_row <= (params.ny - 2) && rank_p[rank].end_row >= (params.ny - 2)) {
-    //printf("rank %d accelerating\n",rank);
-    accelerate_flow(params, cells, obstacles, rank_p, rank);
+  if ( rank_p[rank].start_row <= (params.ny - 2) && (rank_p[rank].end_row >= (params.ny - 2) || rank_p[rank].end_row +1 == (params.ny - 2))) {
+    if (tt== 0) printf("rank %d accelerating work starts %d ends %d\n",rank, rank_p[rank].start_row, rank_p[rank].end_row);
+    accelerate_flow(params, cells, obstacles, rank_p, rank,tt);
   }
+/*   float tot = 0;
+  if (tt == 0 && rank_p[rank].start_row <= 125 && rank_p[rank].end_row >= 125) {
+    int offset = ((125 - rank_p[rank].start_row) +1) * params.nx;
+    for (size_t i = 0; i < params.nx; i++)
+    {
+      tot += cells->speed0[offset+ i];
+      tot += cells->speed1[offset + i];
+      tot += cells->speed2[offset + i];
+      tot += cells->speed3[offset + i];
+      tot += cells->speed4[offset + i];
+      tot += cells->speed5[offset + i];
+      tot += cells->speed6[offset + i];
+      tot += cells->speed7[offset + i];
+      tot += cells->speed8[offset+ i];
+    }
+    printf("total cells at 125 %f\n", tot);
+  } */
 
-  return collision(params, cells, tmp_cells, obstacles, rank_p, rank);
+    return collision(params, cells, tmp_cells, obstacles, rank_p, rank, tt);
 }
 
 int accelerate_flow(const t_param params, t_speed *restrict cells, int *restrict obstacles, rank_props *rank_p, int rank)
@@ -394,6 +411,7 @@ int accelerate_flow(const t_param params, t_speed *restrict cells, int *restrict
     ** we don't send a negative density */
     if (!obstacles[ii + jj * params.nx] && (cells->speed3[ii + (jj+1) * params.nx] - w1) > 0.f && (cells->speed6[ii + (jj+1) * params.nx] - w2) > 0.f && (cells->speed7[ii + (jj+1) * params.nx] - w2) > 0.f)
     {
+      
       /* increase 'east-side' densities */
       cells->speed1[ii + (jj+1) * params.nx] += w1;
       cells->speed5[ii + (jj+1) * params.nx] += w2;
@@ -419,7 +437,7 @@ const float w0 = 4.f / 9.f;   /* weighting factor */
 const float w1 = 1.f / 9.f;   /* weighting factor */
 const float w2 = 1.f / 36.f;  /* weighting factor */
 
-float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank)
+float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt)
 {
 
   /* loop over the cells in the grid
@@ -429,6 +447,7 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
 
   float tot_u = 0.f;
   // unsigned int tot_cells = 0;
+  float tots[128];
 
   for (int jj = 1; jj < (rank_p[rank].end_row-rank_p[rank].start_row) +2; jj++)
   {
@@ -450,7 +469,7 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
       register float speed8 = cells->speed8[x_w + y_n * params.nx]; /* south-east */
       register float speed4 = cells->speed4[ii + y_n * params.nx];  /* south */
       register float speed7 = cells->speed7[x_e + y_n * params.nx]; /* south-west */
-    /*   if (rank_p[rank].start_row + (jj - 1) == 126)
+/*       if (rank_p[rank].start_row + (jj - 1) == 126)
       {
         printf("speed5=%f\n", speed5);
         printf("speed2=%f\n", speed2);
@@ -461,8 +480,8 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
         printf("speed8=%f\n", speed8);
         printf("speed4=%f\n", speed4);
         printf("speed7=%f\n", speed7);
-      }
-  */
+      } */
+  
       /* don't consider occupied cells */
       if (obstacles[ii + (jj-1) * params.nx])
       {
@@ -526,12 +545,16 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
         tmp_cells->speed8[ii + jj * params.nx] = speed8;
 
         tot_u += sqrtf((u_x * u_x) + (u_y * u_y));
-        //if (rank_p[rank].start_row + (jj - 1) == 126) printf("tot_u %f at jj:%d ii:%d\n",tot_u, rank_p[rank].start_row + (jj - 1), ii );
+        //if (rank_p[rank].start_row + (jj - 1) == 126) printf("sqrtf %f at jj:%d ii:%d\n",sqrtf((u_x * u_x) + (u_y * u_y)), rank_p[rank].start_row + (jj - 1), ii );
+        //if (rank_p[rank].start_row + (jj - 1) == 1 && tt==0) printf("tot_u %f at jj:%d ii:%d\n",tot_u, rank_p[rank].start_row + (jj - 1), ii );
 
       }
     }
-    //if (rank_p[rank].start_row + (jj - 1) == 126) printf("tot_t at jj=126 %f\n", tot_u);
+    //if (rank_p[rank].start_row + (jj - 1) == 2 &&  tt==0) printf("tot_t at jj:1 %f\n", tot_u);
+    //if (tt == 0 &&  rank_p[rank].start_row + (jj - 1) > 123)printf("tot_t at jj=%d %f\n", tot_u, rank_p[rank].start_row + (jj - 1));
   }
+
+  //printf("tt %d done\n", tt);
 
   //printf("rank %d collision =  %f\n",rank,tot_u);
   return tot_u;
