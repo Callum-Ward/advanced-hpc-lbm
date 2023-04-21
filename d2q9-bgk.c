@@ -57,9 +57,9 @@ int initialise(const char *restrict paramfile, const char *restrict obstaclefile
 ** accelerate_flow(), propagate(), rebound() & collision()
 */
 void get_rank_sizes(const int rank, const int size,const int rows, rank_props *work);
-float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt, int *restrict acc_obstacles);
+float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int size, int *restrict acc_obstacles);
 int accelerate_flow(const t_param params, t_speed *restrict cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt, int *restrict acc_obstacles);
-float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt);
+float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int size);
 int write_values(const t_param params,float *restrict cells, int *restrict obstacles, float *restrict av_vels, rank_props *rank_p);
 
 /* finalise, including freeing up allocated memory */
@@ -98,6 +98,8 @@ int main(int argc, char *argv[])
   float *av_vals = NULL;                                                             /* a record of the av. velocity computed for each timestep */
   struct timeval timstr;                                                             /* structure to hold elapsed time */
   double tot_tic, tot_toc, init_tic, init_toc, comp_tic, comp_toc, col_tic, col_toc; /* floating point numbers to calculate elapsed wallclock time */
+  double send_tic, send_toc;
+  double send_total;
   /* parse the command line */
   if (argc != 3)
   {
@@ -122,7 +124,7 @@ int main(int argc, char *argv[])
 
   const int rank = tmp_rank;
   const int size = tmp_size;
-  if (rank==0) printf("Number of ranks %d\n",size);
+  //if (rank==0) printf("Number of ranks %d\n",size);
   int tot_obs;
   left = (rank ==0) ? size-1 : rank-1;
   right = (rank ==size-1) ? 0 : rank+1;
@@ -133,88 +135,51 @@ int main(int argc, char *argv[])
   //printf("my rank: %d start: %d end: %d left: %d right: %d\n", rank, rank_p[rank].start_row, rank_p[rank].end_row, left, right);
   //printf("rank %d init complete\n",rank);
   //printf(" 1 cells->speed0[0]=%f\n",cells->speed0[0]);
-  printf("rank %d start %d end %d \n", rank, rank_p[rank].start_row, rank_p[rank].end_row);
+  //printf("rank %d start %d end %d \n", rank, rank_p[rank].start_row, rank_p[rank].end_row);
 
   int odd_rank = (rank%2 == 0) ? 0 : 1;
   int even_size = ((size-1)%2 == 0) ? 1 : 0;
   int tag = 77;
   int work_rows = rank_p[rank].end_row - rank_p[rank].start_row;
 
-  int myobs = 0;
-  for (size_t i = 0; i < (work_rows+1) * params.nx; i++) {
-    if (!obstacles[i]) myobs+=1;
-  }
-
-/*   float w0 = params.density * 4.f / 9.f;
-  float w1 = params.density / 9.f;
-  float w2 = params.density / 36.f;
-
- for (size_t i = 0; i < (work_rows+3)*params.nx; i++)
-  {
-    if (cells->speed0[i] != w0 ) printf("speed 0 wrong\n");
-    if (cells->speed1[i] != w1 ) printf("speed 1 wrong\n");
-    if (cells->speed2[i] != w1 ) printf("speed 2 wrong\n");
-    if (cells->speed3[i] != w1 ) printf("speed 3 wrong\n");
-    if (cells->speed4[i] != w1 ) printf("speed 4 wrong\n");
-    if (cells->speed5[i] != w2 ) printf("speed 5 wrong\n");
-    if (cells->speed6[i] != w2 ) printf("speed 6 wrong\n");
-    if (cells->speed7[i] != w2 ) printf("speed 7 wrong\n");
-    if (cells->speed8[i] != w2 ) printf("speed 8 wrong\n");
-  } */
-
-  //printf("rank %d my obs %d\n", rank, myobs);
-  //if (rank==0) printf("obs %d\n",tot_obs);
-
   /* Init time stops here, compute time starts*/
   gettimeofday(&timstr, NULL);
   init_toc = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
   comp_tic = init_toc;
 
-  if (rank == 0 ) printf("total obs = %d\n",tot_obs);
+  //if (rank == 0 ) printf("total obs = %d\n",tot_obs);
 
-  t_speed *old = NULL;
-  for (int tt = 0; tt < params.maxIters; tt++)
-  {
-
-    av_vals[tt] = timestep(params, cells, tmp_cells, obstacles, rank_p, rank, tt, acc_obstacles) / tot_obs;    
-    old = cells; // keep pointer to avoid leak
-    cells = tmp_cells;
-    tmp_cells = old;
-    if (tt % 1000 ==0) {
-      //printf("rank %d iteration %d av_vals = %f\n",rank, tt, av_vals[tt]);
-    }
-
-    
-     /*   if (tt == 0 && rank==0) {
-      printf("rank %d finished iteration %d av_vals = %f\n", rank, tt, av_vals[tt]);
-      printf("speed0[0]=%f\n",cells->speed0[0]);
-      printf("data[0]]=%f\n",cells_data[0]);
-    } */
-    
     MPI_Datatype speed_rows;
     MPI_Type_vector(9, params.nx, (work_rows + 3) * params.nx, MPI_FLOAT, &speed_rows);
     MPI_Type_commit(&speed_rows);
 
+  t_speed *old = NULL;
+  for (int tt = 0; tt < params.maxIters; tt++)
+  {
+    av_vals[tt] = timestep(params, cells, tmp_cells, obstacles, rank_p, rank, size, acc_obstacles) / tot_obs;    
+    old = cells; // keep pointer to avoid leak
+    cells = tmp_cells;
+    tmp_cells = old;
+
+    // gettimeofday(&timstr, NULL);
+    // send_tic = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
+
     // exchange halos
     // 1st exchange, even ranks sendrec right
     // 2nd exchange, even ranks sendrec left
-    if (size > 0)
+    if (size > 1)
     {
-      //printf("rank %d halo exchange\n", rank);
-
       if (odd_rank) //odd sends left
       {
         MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       } else if (!odd_rank && rank != size-1) { //if last rank number is even don't try and receive from the right yet
         MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       }
-
       if (!odd_rank && !(rank==0 && even_size)) {
         MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       } else if (odd_rank) {  //if last rank number is even don't try and receive from the right yet
         MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      }
-    
+      } 
       if (even_size) {
         if (rank==0) {
           MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
@@ -225,13 +190,10 @@ int main(int argc, char *argv[])
         }
       }
     }
-/*      if (rank ==0) {
-      printf("top halo at tt %d  = %f\n",tt,tmp_cells->speed0[0]);
-    } else if (rank == 3) {
-      printf("bottom halo at tt %d = %f\n",tt, tmp_cells->speed0[((work_rows+3) * params.nx) -1]);
-    } */
 
-
+    // gettimeofday(&timstr, NULL);
+    // send_toc = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
+    // send_total += (send_toc - send_tic);
 
 #ifdef DEBUG
     printf("==timestep: %d==\n", tt);
@@ -239,12 +201,11 @@ int main(int argc, char *argv[])
     printf("tot density: %.12E\n", total_density(params, cells));
 #endif
   }
-  if(rank==0) printf("make it past compute\n");
 
-  /* Compute time stops here, collate time starts*/
+//Compute time stops here, collate time starts
   gettimeofday(&timstr, NULL);
   comp_toc = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
-  col_tic = comp_toc;
+  col_tic = comp_toc; 
   
   float *cells_all;
   int *obstacles_all;
@@ -260,18 +221,10 @@ int main(int argc, char *argv[])
     rec_cell_count[i] = ((rank_p[i].end_row - rank_p[i].start_row) + 3) * params.nx * 9;
     rec_obs_count[i] = ((rank_p[i].end_row - rank_p[i].start_row) + 1) * params.nx;
     displs[i] = obs_sum;
-    //if (rank == 0) printf("offset obs at %d = %d", i, displs[i]);
     displs_cells[i] = cells_sum;
-    //if (rank == 0) printf("offset cells at %d = %d", i, displs_cells[i]);
-
     obs_sum += rec_obs_count[i];
     cells_sum += rec_cell_count[i];
   }
-  //printf("rank %d sending %d obs\n", rank, rec_obs_count[rank]);
-  //printf("rank %d sending %d cells\n", rank, rec_cell_count[rank]);
-
-  //if (rank ==0) printf("rank 0 recieving %d obs\n", params.nx * params.ny);
-  //if (rank == 0) printf("rank 0 recieving %d cells\n", (params.ny + size * 2) * params.nx * 9);
 
   if (size > 1)
   {
@@ -281,20 +234,19 @@ int main(int argc, char *argv[])
       cells_all = (float *)_mm_malloc(sizeof(float) * (params.ny + size * 2) * params.nx * 9, 64);
       MPI_Reduce(MPI_IN_PLACE, av_vals, params.maxIters, MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
     }
-    else
-    {
-      MPI_Reduce(av_vals, NULL, params.maxIters, MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
-    }
-    if (rank == 0) for (size_t i = 0; i < params.maxIters; i += 1000) printf("av_vels[%d]=%f\n", i, av_vals[i]);
-
+    else MPI_Reduce(av_vals, NULL, params.maxIters, MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Gatherv(obstacles, rec_obs_count[rank], MPI_INT, obstacles_all, rec_obs_count, displs, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Gatherv(&cells->speed0[0], rec_cell_count[rank], MPI_FLOAT, cells_all, rec_cell_count, displs_cells, MPI_FLOAT, 0, MPI_COMM_WORLD);
+   
+    float *old_cells;
+    int *old_obs;
+    old_cells = &cells->speed0[0];
+    cells->speed0 = cells_all;
+    cells_all=old_cells;
+    old_obs = obstacles;
+    obstacles = obstacles_all;
+    obstacles_all = old_obs;
   } 
-  for (size_t i = 23000; i < 23010; i++)
-  {
-    //if (rank == 0) printf("cells[%d] = %f\n", i, cells_all[i]);
-  } 
-  
 
   /* Total/collate time stops here.*/
   gettimeofday(&timstr, NULL);
@@ -303,21 +255,22 @@ int main(int argc, char *argv[])
 
   if (rank == 0) {
         /* write final values and free memory */
-    printf("==done==\n");
-    printf("Reynolds number:\t\t%.12E\n", calc_reynolds(params, cells_all, obstacles_all, rank_p));
-
+/*     printf("==done==\n");
+    printf("Reynolds number:\t\t%.12E\n", calc_reynolds(params, cells->speed0, obstacles, rank_p));
     printf("Elapsed Init time:\t\t\t%.6lf (s)\n", init_toc - init_tic);
     printf("Elapsed Compute time:\t\t\t%.6lf (s)\n", comp_toc - comp_tic);
     printf("Elapsed Collate time:\t\t\t%.6lf (s)\n", col_toc - col_tic);
-    printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic);
-    write_values(params, cells_all, obstacles_all, av_vals, rank_p);
-    finalise(&params,&cells, &tmp_data, &tmp_cells, &tmp_data, &obstacles, &av_vals,&acc_obstacles);
-
-
-    _mm_free(cells_all);
-    cells_all = NULL;
-    _mm_free(obstacles_all);
-    obstacles_all = NULL;
+    printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic); */
+    printf("%.6lf\n", tot_toc - tot_tic);
+    //printf("%.6lf\n", send_total);
+    write_values(params, cells->speed0, obstacles, av_vals, rank_p);
+    finalise(&params,&cells, &tmp_data, &tmp_cells, &tmp_data, &obstacles, &av_vals, &acc_obstacles);
+    if (size > 1) {
+      _mm_free(cells_all);
+      cells_all = NULL;
+      _mm_free(obstacles_all);
+      obstacles_all = NULL;
+    }
   }
   MPI_Finalize();
   return EXIT_SUCCESS;
@@ -357,33 +310,15 @@ void get_rank_sizes(const int rank, const int size, const int tot_rows, rank_pro
    
 }
 
-float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt, int *acc_obstacles)
+float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int size, int *acc_obstacles)
 {
   if ( rank_p[rank].start_row <= (params.ny - 2) && (rank_p[rank].end_row >= (params.ny - 3) )) {
-    if (tt== 0) printf("rank %d accelerating work starts %d ends %d\n",rank, rank_p[rank].start_row, rank_p[rank].end_row);
-    accelerate_flow(params, cells, obstacles, rank_p, rank, tt,acc_obstacles);
+    //if (tt== 0) printf("rank %d accelerating work starts %d ends %d\n",rank, rank_p[rank].start_row, rank_p[rank].end_row);
+    accelerate_flow(params, cells, obstacles, rank_p, rank, size,acc_obstacles);
   } else if ( rank_p[rank].start_row - 1 == (params.ny - 2)) {
-    accelerate_flow(params, cells, obstacles, rank_p, rank, tt, acc_obstacles);
+    accelerate_flow(params, cells, obstacles, rank_p, rank, size, acc_obstacles);
   }
-/*   float tot = 0;
-  if (tt == 0 && rank_p[rank].start_row <= 125 && rank_p[rank].end_row >= 125) {
-    int offset = ((125 - rank_p[rank].start_row) +1) * params.nx;
-    for (size_t i = 0; i < params.nx; i++)
-    {
-      tot += cells->speed0[offset+ i];
-      tot += cells->speed1[offset + i];
-      tot += cells->speed2[offset + i];
-      tot += cells->speed3[offset + i];
-      tot += cells->speed4[offset + i];
-      tot += cells->speed5[offset + i];
-      tot += cells->speed6[offset + i];
-      tot += cells->speed7[offset + i];
-      tot += cells->speed8[offset+ i];
-    }
-    printf("total cells at 125 %f\n", tot);
-  } */
-
-    return collision(params, cells, tmp_cells, obstacles, rank_p, rank, tt);
+    return collision(params, cells, tmp_cells, obstacles, rank_p, rank, size);
 }
 
 int accelerate_flow(const t_param params, t_speed *restrict cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt, int *acc_obstacles)
@@ -414,7 +349,6 @@ int accelerate_flow(const t_param params, t_speed *restrict cells, int *restrict
     ** we don't send a negative density */
     if (!acc_obstacles[ii] && (cells->speed3[ii + (jj+1) * params.nx] - w1) > 0.f && (cells->speed6[ii + (jj+1) * params.nx] - w2) > 0.f && (cells->speed7[ii + (jj+1) * params.nx] - w2) > 0.f)
     {
-      
       /* increase 'east-side' densities */
       cells->speed1[ii + (jj+1) * params.nx] += w1;
       cells->speed5[ii + (jj+1) * params.nx] += w2;
@@ -423,12 +357,6 @@ int accelerate_flow(const t_param params, t_speed *restrict cells, int *restrict
       cells->speed3[ii + (jj+1) * params.nx] -= w1;
       cells->speed6[ii + (jj+1) * params.nx] -= w2;
       cells->speed7[ii + (jj+1) * params.nx] -= w2;
-/*       printf("speed0[%d]=%f\n", ii + (jj + 1) * params.nx, cells->speed0[ii + (jj + 1) * params.nx]);
-      printf("speed5[%d]=%f\n", ii + (jj + 1) * params.nx, cells->speed5[ii + (jj + 1) * params.nx]);
-      printf("speed8[%d]=%f\n", ii + (jj + 1) * params.nx, cells->speed8[ii + (jj + 1) * params.nx]);
-      printf("speed3[%d]=%f\n", ii + (jj + 1) * params.nx, cells->speed3[ii + (jj + 1) * params.nx]);
-      printf("speed6[%d]=%f\n", ii + (jj + 1) * params.nx, cells->speed6[ii + (jj + 1) * params.nx]);
-      printf("speed7[%d]=%f\n", ii + (jj + 1) * params.nx, cells->speed7[ii + (jj + 1) * params.nx]); */
     }
   }
 
@@ -440,9 +368,8 @@ const float w0 = 4.f / 9.f;   /* weighting factor */
 const float w1 = 1.f / 9.f;   /* weighting factor */
 const float w2 = 1.f / 36.f;  /* weighting factor */
 
-float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt)
+float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int size)
 {
-
   /* loop over the cells in the grid
   ** NB the collision step is called after
   ** the propagate step and so values of interest
@@ -450,14 +377,24 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
 
   float tot_u = 0.f;
   // unsigned int tot_cells = 0;
-  float tots[128];
 
   for (int jj = 1; jj < (rank_p[rank].end_row-rank_p[rank].start_row) +2; jj++)
   {
-    const int y_n = jj + 1;
-    const int y_s = jj - 1;
+    //printf("jj%d\n",jj);
+    int y_n;
+    int y_s;
 
-    #pragma omp simd
+    if (size > 1) {
+      y_n = jj + 1;
+      y_s = jj - 1;
+    } else {
+      y_n = (jj == params.ny) ? (1) : jj + 1;
+      y_s = (jj == 1) ? (params.ny) : (jj - 1);
+    }
+    //printf("jn%d\n", y_n);
+    //printf("js%d\n", y_s);
+
+#pragma omp simd
     for (int ii = 0; ii < params.nx; ii++)
     {
 
@@ -472,19 +409,7 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
       register float speed8 = cells->speed8[x_w + y_n * params.nx]; /* south-east */
       register float speed4 = cells->speed4[ii + y_n * params.nx];  /* south */
       register float speed7 = cells->speed7[x_e + y_n * params.nx]; /* south-west */
-/*       if (rank_p[rank].start_row + (jj - 1) == 126)
-      {
-        printf("speed5=%f\n", speed5);
-        printf("speed2=%f\n", speed2);
-        printf("speed6=%f\n", speed6);
-        printf("speed1=%f\n", speed1);
-        printf("speed0=%f\n", speed0);
-        printf("speed3=%f\n", speed3);
-        printf("speed8=%f\n", speed8);
-        printf("speed4=%f\n", speed4);
-        printf("speed7=%f\n", speed7);
-      } */
-  
+
       /* don't consider occupied cells */
       if (obstacles[ii + (jj-1) * params.nx])
       {
@@ -548,18 +473,11 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
         tmp_cells->speed8[ii + jj * params.nx] = speed8;
 
         tot_u += sqrtf((u_x * u_x) + (u_y * u_y));
-        //if (rank_p[rank].start_row + (jj - 1) == 126) printf("sqrtf %f at jj:%d ii:%d\n",sqrtf((u_x * u_x) + (u_y * u_y)), rank_p[rank].start_row + (jj - 1), ii );
-        //if (rank_p[rank].start_row + (jj - 1) == 1 && tt==0) printf("tot_u %f at jj:%d ii:%d\n",tot_u, rank_p[rank].start_row + (jj - 1), ii );
-
+ 
       }
     }
-    //if (rank_p[rank].start_row + (jj - 1) == 2 &&  tt==0) printf("tot_t at jj:1 %f\n", tot_u);
-    //if (tt == 0 &&  rank_p[rank].start_row + (jj - 1) > 123)printf("tot_t at jj=%d %f\n", tot_u, rank_p[rank].start_row + (jj - 1));
   }
 
-  //printf("tt %d done\n", tt);
-
-  //printf("rank %d collision =  %f\n",rank,tot_u);
   return tot_u;
 }
 
@@ -578,8 +496,7 @@ float av_velocity(const t_param params, float *restrict cells, int *restrict obs
   int jj_offset = 0;
   for (int jj = 0; jj < params.ny; jj++)
   {
-#pragma vector aligned
-#pragma omp simd
+
     for (int ii = 0; ii < params.nx; ii++)
     {
 
@@ -625,7 +542,7 @@ float av_velocity(const t_param params, float *restrict cells, int *restrict obs
     return tot_u / (float)tot_cells;
   }
 
-  int initialise(const char *restrict paramfile, const char *restrict obstaclefile,
+int initialise(const char *restrict paramfile, const char *restrict obstaclefile,
                  t_param *params, t_speed **restrict cells_ptr, float **restrict cells_data, t_speed **restrict tmp_cells_ptr, float **restrict tmp_data,
                  int **restrict obstacles_ptr, float **restrict av_vels_ptr, rank_props *restrict rank_p, int rank, int size, int *tot_obs, int **restrict acc_obstacles)
   {
@@ -704,11 +621,7 @@ float av_velocity(const t_param params, float *restrict cells, int *restrict obs
   */
   get_rank_sizes(rank, size, params->ny, rank_p); //populate rank_p struct to with relevent processing regions per rank
   int work_rows = rank_p[rank].end_row - rank_p[rank].start_row + 3;//allocate data for rank processing region & 2 halos
-  for (size_t i = 0; i < size; i++)
-  {
-    //if (rank ==0) printf("rank %d from %d to %d\n",i,rank_p[i].start_row, rank_p[i].end_row);
-  }
-  
+
   //printf("my rank %d work %d\n",rank ,work_rows);
 
   
@@ -767,7 +680,6 @@ float av_velocity(const t_param params, float *restrict cells, int *restrict obs
   {
     for (int ii = 0; ii < params->nx; ii++)
     {
-      //sprintf("rank %d cells_data[%d]=%f\n", rank, ii + jj * params->nx, cells_data[ii + jj * params->nx]);
       /* centre */
       (*cells_ptr)->speed0[ii + jj * params->nx] = w0;
       /* axis directions */
@@ -960,7 +872,6 @@ int write_values(const t_param params, float *restrict cells, int *restrict obst
         local_density += cells[baseIndex + speedOffset *6];
         local_density += cells[baseIndex + speedOffset *7];
         local_density += cells[baseIndex + speedOffset *8];
-
 
         /* compute x velocity component */
         // order 1,5,8,3,6,7
