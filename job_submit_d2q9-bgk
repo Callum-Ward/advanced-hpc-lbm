@@ -19,13 +19,17 @@ echo Slurm job ID is $SLURM_JOB_ID
 echo This job runs on the following machines:
 echo `echo $SLURM_JOB_NODELIST | uniq`
 
+export OMP_NUM_THREADS=28
+export OMP_PROC_BIND=close
+export OMP_PLACES=cores
+
 #! Run the executable
 #valgrind --tool=cachegrind ./d2q9-bgk input_256x256.params obstacles_256x256.dat
 
-mpirun -np 112 ./d2q9-bgk ~/advanced-hpc-lbm/input_128x128.params  ~/advanced-hpc-lbm/obstacles_128x128.dat
-mpirun -np 112 ./d2q9-bgk ~/advanced-hpc-lbm/input_128x256.params  ~/advanced-hpc-lbm/obstacles_128x256.dat
-mpirun -np 112 ./d2q9-bgk ~/advanced-hpc-lbm/input_256x256.params  ~/advanced-hpc-lbm/obstacles_256x256.dat
-mpirun -np 112 ./d2q9-bgk ~/advanced-hpc-lbm/input_1024x1024.params  ~/advanced-hpc-lbm/obstacles_1024x1024.dat
+mpirun --map-by socket -np 4 ./d2q9-bgk ~/advanced-hpc-lbm/input_128x128.params  ~/advanced-hpc-lbm/obstacles_128x128.dat
+mpirun --map-by socket -np 4 ./d2q9-bgk ~/advanced-hpc-lbm/input_128x256.params  ~/advanced-hpc-lbm/obstacles_128x256.dat
+mpirun --map-by socket -np 4 ./d2q9-bgk ~/advanced-hpc-lbm/input_256x256.params  ~/advanced-hpc-lbm/obstacles_256x256.dat
+mpirun --map-by socket -np 4 ./d2q9-bgk ~/advanced-hpc-lbm/input_1024x1024.params  ~/advanced-hpc-lbm/obstacles_1024x1024.dat
 
 # for i in {1..112}
 # do

@@ -9,7 +9,7 @@ CFLAGS= -std=c11 -Wall -O3 -msse4 -mtune=native -march=native -funroll-loops --p
 IFLAGS= -O3
 #IFLAGS= -O3 -xBROADWELL -restrict 
 #IFLAGS= -O3 -restrict
-LIBS = -lm
+LIBS = -lm -qopenmp
 
 FINAL_STATE_FILE=./final_state.dat
 AV_VELS_FILE=./av_vels.dat
