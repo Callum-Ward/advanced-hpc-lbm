@@ -255,13 +255,13 @@ int main(int argc, char *argv[])
 
   if (rank == 0) {
         /* write final values and free memory */
-/*     printf("==done==\n");
+    printf("==done==\n");
     printf("Reynolds number:\t\t%.12E\n", calc_reynolds(params, cells->speed0, obstacles, rank_p));
     printf("Elapsed Init time:\t\t\t%.6lf (s)\n", init_toc - init_tic);
     printf("Elapsed Compute time:\t\t\t%.6lf (s)\n", comp_toc - comp_tic);
     printf("Elapsed Collate time:\t\t\t%.6lf (s)\n", col_toc - col_tic);
-    printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic); */
-    printf("%.6lf\n", tot_toc - tot_tic);
+    printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic);
+    //printf("%.6lf\n", tot_toc - tot_tic);
     //printf("%.6lf\n", send_total);
     write_values(params, cells->speed0, obstacles, av_vals, rank_p);
     finalise(&params,&cells, &tmp_data, &tmp_cells, &tmp_data, &obstacles, &av_vals, &acc_obstacles);
@@ -378,6 +378,30 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
   float tot_u = 0.f;
   // unsigned int tot_cells = 0;
 
+  __assume_aligned(obstacles, 64);
+  __assume_aligned(cells->speed0, 64);
+  __assume_aligned(cells->speed1, 64);
+  __assume_aligned(cells->speed2, 64);
+  __assume_aligned(cells->speed3, 64);
+  __assume_aligned(cells->speed4, 64);
+  __assume_aligned(cells->speed5, 64);
+  __assume_aligned(cells->speed6, 64);
+  __assume_aligned(cells->speed7, 64);
+  __assume_aligned(cells->speed8, 64);
+  __assume_aligned(tmp_cells->speed0, 64);
+  __assume_aligned(tmp_cells->speed1, 64);
+  __assume_aligned(tmp_cells->speed2, 64);
+  __assume_aligned(tmp_cells->speed3, 64);
+  __assume_aligned(tmp_cells->speed4, 64);
+  __assume_aligned(tmp_cells->speed5, 64);
+  __assume_aligned(tmp_cells->speed6, 64);
+  __assume_aligned(tmp_cells->speed7, 64);
+  __assume_aligned(tmp_cells->speed8, 64);
+  __assume((params.nx) % 2 == 0);
+  __assume((params.ny) % 2 == 0);
+
+#pragma vector aligned
+#pragma omp parallel for reduction(+ : tot_u)
   for (int jj = 1; jj < (rank_p[rank].end_row-rank_p[rank].start_row) +2; jj++)
   {
     //printf("jj%d\n",jj);
@@ -394,7 +418,7 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
     //printf("jn%d\n", y_n);
     //printf("js%d\n", y_s);
 
-#pragma omp simd
+#pragma omp simd reduction(+ : tot_u)
     for (int ii = 0; ii < params.nx; ii++)
     {
 
@@ -675,7 +699,8 @@ int initialise(const char *restrict paramfile, const char *restrict obstaclefile
   float w1 = params->density / 9.f;
   float w2 = params->density / 36.f;
 
-#pragma omp simd
+//#pragma omp simd
+#pragma omp parallel
   for (int jj = 0; jj < work_rows; jj++) //write to cells including halo regions
   {
     for (int ii = 0; ii < params->nx; ii++)
