@@ -59,7 +59,7 @@ int initialise(const char *restrict paramfile, const char *restrict obstaclefile
 void get_rank_sizes(const int rank, const int size,const int rows, rank_props *work);
 float timestep(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int size, int *restrict acc_obstacles);
 int accelerate_flow(const t_param params, t_speed *restrict cells, int *restrict obstacles, rank_props *rank_p, int rank, int tt, int *restrict acc_obstacles);
-float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int size);
+float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *restrict rank_p, int rank, int size);
 int write_values(const t_param params,float *restrict cells, int *restrict obstacles, float *restrict av_vels, rank_props *rank_p);
 
 /* finalise, including freeing up allocated memory */
@@ -254,14 +254,14 @@ int main(int argc, char *argv[])
   tot_toc = col_toc;
 
   if (rank == 0) {
-        /* write final values and free memory */
-/*     printf("==done==\n");
+    /* write final values and free memory */
+    printf("==done==\n");
     printf("Reynolds number:\t\t%.12E\n", calc_reynolds(params, cells->speed0, obstacles, rank_p));
     printf("Elapsed Init time:\t\t\t%.6lf (s)\n", init_toc - init_tic);
     printf("Elapsed Compute time:\t\t\t%.6lf (s)\n", comp_toc - comp_tic);
     printf("Elapsed Collate time:\t\t\t%.6lf (s)\n", col_toc - col_tic);
-    printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic); */
-    printf("%.6lf\n", tot_toc - tot_tic);
+    printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic);
+    //printf("%.6lf\n", tot_toc - tot_tic);
     //printf("%.6lf\n", send_total);
     write_values(params, cells->speed0, obstacles, av_vals, rank_p);
     finalise(&params,&cells, &tmp_data, &tmp_cells, &tmp_data, &obstacles, &av_vals, &acc_obstacles);
@@ -368,7 +368,7 @@ const float w0 = 4.f / 9.f;   /* weighting factor */
 const float w1 = 1.f / 9.f;   /* weighting factor */
 const float w2 = 1.f / 36.f;  /* weighting factor */
 
-float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *rank_p, int rank, int size)
+float collision(const t_param params, t_speed *restrict cells, t_speed *restrict tmp_cells, int *restrict obstacles, rank_props *restrict rank_p, int rank, int size)
 {
   /* loop over the cells in the grid
   ** NB the collision step is called after
@@ -378,26 +378,48 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
   float tot_u = 0.f;
   // unsigned int tot_cells = 0;
 
+   __assume_aligned(obstacles, 64);
+    __assume_aligned(cells->speed0, 64);
+    __assume_aligned(cells->speed1, 64);
+    __assume_aligned(cells->speed2, 64);
+    __assume_aligned(cells->speed3, 64);
+    __assume_aligned(cells->speed4, 64);
+    __assume_aligned(cells->speed5, 64);
+    __assume_aligned(cells->speed6, 64);
+    __assume_aligned(cells->speed7, 64);
+    __assume_aligned(cells->speed8, 64);
+    __assume_aligned(tmp_cells->speed0, 64);
+    __assume_aligned(tmp_cells->speed1, 64);
+    __assume_aligned(tmp_cells->speed2, 64);
+    __assume_aligned(tmp_cells->speed3, 64);
+    __assume_aligned(tmp_cells->speed4, 64);
+    __assume_aligned(tmp_cells->speed5, 64);
+    __assume_aligned(tmp_cells->speed6, 64);
+    __assume_aligned(tmp_cells->speed7, 64);
+    __assume_aligned(tmp_cells->speed8, 64);
+    __assume((params.nx) % 2 == 0);
+    __assume((params.ny) % 2 == 0); 
+
   for (int jj = 1; jj < (rank_p[rank].end_row-rank_p[rank].start_row) +2; jj++)
   {
-    //printf("jj%d\n",jj);
+
     int y_n;
     int y_s;
 
-    if (size > 1) {
-      y_n = jj + 1;
-      y_s = jj - 1;
-    } else {
-      y_n = (jj == params.ny) ? (1) : jj + 1;
-      y_s = (jj == 1) ? (params.ny) : (jj - 1);
-    }
-    //printf("jn%d\n", y_n);
-    //printf("js%d\n", y_s);
+    // if (size > 1) {
+    //   y_n = jj + 1;
+    //   y_s = jj - 1;
+    // } else {
+    //   y_n = (jj == params.ny) ? (1) : jj + 1;
+    //   y_s = (jj == 1) ? (params.ny) : (jj - 1);
+    // }
+
+    y_n = jj + 1;
+    y_s = jj - 1;
 
 #pragma omp simd
     for (int ii = 0; ii < params.nx; ii++)
     {
-
       register const int x_e = (ii == params.nx - 1) ? (0) : (ii + 1);
       register const int x_w = (ii == 0) ? (ii + params.nx - 1) : (ii - 1);
       register float speed5 = cells->speed5[x_w + y_s * params.nx]; /* north-east */
