@@ -406,16 +406,13 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
     int y_n;
     int y_s;
 
-    // if (size > 1) {
-    //   y_n = jj + 1;
-    //   y_s = jj - 1;
-    // } else {
-    //   y_n = (jj == params.ny) ? (1) : jj + 1;
-    //   y_s = (jj == 1) ? (params.ny) : (jj - 1);
-    // }
-
-    y_n = jj + 1;
-    y_s = jj - 1;
+    if (size > 1) {
+      y_n = jj + 1;
+      y_s = jj - 1;
+    } else {
+      y_n = (jj == params.ny) ? (1) : jj + 1;
+      y_s = (jj == 1) ? (params.ny) : (jj - 1);
+    }
 
 #pragma omp simd
     for (int ii = 0; ii < params.nx; ii++)
