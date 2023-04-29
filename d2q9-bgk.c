@@ -94,8 +94,9 @@ int main(int argc, char *argv[])
   t_speed *tmp_cells = NULL; /* scratch space */
   float *tmp_data = NULL;
   int *obstacles = NULL;                                                             /* grid indicating which cells are blocked */
-  int *acc_obstacles = NULL;                                                             /* grid indicating which cells are blocked */
-  float *av_vals = NULL;                                                             /* a record of the av. velocity computed for each timestep */
+  int *acc_obstacles = NULL;
+  float *sendbuf1, *sendbuf2, *recbuf1, *recbuf2;                                                              /* grid indicating which cells are blocked */
+  float *av_vals = NULL;                                                         /* a record of the av. velocity computed for each timestep */
   struct timeval timstr;                                                             /* structure to hold elapsed time */
   double tot_tic, tot_toc, init_tic, init_toc, comp_tic, comp_toc, col_tic, col_toc; /* floating point numbers to calculate elapsed wallclock time */
   double send_tic, send_toc;
@@ -131,7 +132,14 @@ int main(int argc, char *argv[])
   rank_props rank_p[size];
 
   initialise(paramfile, obstaclefile, &params, &cells , &cells_data, &tmp_cells, &tmp_data, &obstacles, &av_vals, rank_p, rank, size, &tot_obs, &acc_obstacles);
-  
+
+  if (size > 1) {
+    sendbuf1 = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
+    sendbuf2 = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
+    recbuf1 = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
+    recbuf2 = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
+  }
+
   //printf("my rank: %d start: %d end: %d left: %d right: %d\n", rank, rank_p[rank].start_row, rank_p[rank].end_row, left, right);
   //printf("rank %d init complete\n",rank);
   //printf(" 1 cells->speed0[0]=%f\n",cells->speed0[0]);
@@ -153,9 +161,11 @@ int main(int argc, char *argv[])
     MPI_Type_vector(9, params.nx, (work_rows + 3) * params.nx, MPI_FLOAT, &speed_rows);
     MPI_Type_commit(&speed_rows);
 
-  t_speed *old = NULL;
-  for (int tt = 0; tt < params.maxIters; tt++)
-  {
+
+    t_speed *old = NULL;
+    for (int tt = 0; tt < params.maxIters; tt++)
+    {
+
     av_vals[tt] = timestep(params, cells, tmp_cells, obstacles, rank_p, rank, size, acc_obstacles) / tot_obs;    
     old = cells; // keep pointer to avoid leak
     cells = tmp_cells;
@@ -167,28 +177,91 @@ int main(int argc, char *argv[])
     // exchange halos
     // 1st exchange, even ranks sendrec right
     // 2nd exchange, even ranks sendrec left
+
+
+
     if (size > 1)
     {
-      if (odd_rank) //odd sends left
+      MPI_Request req[4];
+
+      for (size_t i = 0; i < params.nx; i++) 
       {
-        MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      } else if (!odd_rank && rank != size-1) { //if last rank number is even don't try and receive from the right yet
-        MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        sendbuf1[i] = cells->speed0[i +params.nx];
+        sendbuf1[i + params.nx] = cells->speed1[i + params.nx];
+        sendbuf1[i + params.nx*2] = cells->speed2[i + params.nx];
+        sendbuf1[i + params.nx*3] = cells->speed3[i + params.nx];
+        sendbuf1[i + params.nx*4] = cells->speed4[i + params.nx];
+        sendbuf1[i + params.nx*5] = cells->speed5[i + params.nx];
+        sendbuf1[i + params.nx*6] = cells->speed6[i + params.nx];
+        sendbuf1[i + params.nx*7] = cells->speed7[i + params.nx];
+        sendbuf1[i + params.nx*8] = cells->speed8[i + params.nx];
       }
-      if (!odd_rank && !(rank==0 && even_size)) {
-        MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      } else if (odd_rank) {  //if last rank number is even don't try and receive from the right yet
-        MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      MPI_Isend(sendbuf1, params.nx * 9, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &req[0]);
+      MPI_Irecv(recbuf1, params.nx * 9, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &req[1]);
+
+      for (size_t i = 0; i < params.nx; i++)
+      {
+        sendbuf2[i] = cells->speed0[i + params.nx];
+        sendbuf2[i + params.nx] = cells->speed1[i + params.nx];
+        sendbuf2[i + params.nx * 2] = cells->speed2[i + (work_rows + 1) * params.nx];
+        sendbuf2[i + params.nx * 3] = cells->speed3[i + (work_rows + 1) * params.nx];
+        sendbuf2[i + params.nx * 4] = cells->speed4[i + (work_rows + 1) * params.nx];
+        sendbuf2[i + params.nx * 5] = cells->speed5[i + (work_rows + 1) * params.nx];
+        sendbuf2[i + params.nx * 6] = cells->speed6[i + (work_rows + 1) * params.nx];
+        sendbuf2[i + params.nx * 7] = cells->speed7[i + (work_rows + 1) * params.nx];
+        sendbuf2[i + params.nx * 8] = cells->speed8[i + (work_rows + 1) * params.nx];
+      }
+      MPI_Isend(sendbuf2, params.nx * 9, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &req[2]);
+      MPI_Irecv(recbuf2, params.nx * 9, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &req[3]);
+
+      MPI_Waitall(4, req, MPI_STATUSES_IGNORE);
+
+
+      for (size_t i = 0; i < params.nx; i++)
+      {
+        cells->speed0[i + (work_rows + 2) * params.nx] = recbuf1[i];
+        cells->speed1[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx];
+        cells->speed2[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 2];
+        cells->speed3[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 3];
+        cells->speed4[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 4];
+        cells->speed5[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 5];
+        cells->speed6[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 6];
+        cells->speed7[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 7];
+        cells->speed8[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 8];
+
+        cells->speed0[i] = recbuf2[i];
+        cells->speed1[i] = recbuf2[i + params.nx];
+        cells->speed2[i] = recbuf2[i + params.nx*2];
+        cells->speed3[i] = recbuf2[i + params.nx*3];
+        cells->speed4[i] = recbuf2[i + params.nx*4];
+        cells->speed5[i] = recbuf2[i + params.nx*5];
+        cells->speed6[i] = recbuf2[i + params.nx*6];
+        cells->speed7[i] = recbuf2[i + params.nx*7];
+        cells->speed8[i] = recbuf2[i + params.nx*8];
       } 
-      if (even_size) {
-        if (rank==0) {
-          MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        }
-        else if (rank == size - 1)
-        {
-          MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        }
-      }
+      
+
+
+      // if (odd_rank) //odd sends left
+      // {
+      //   MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      // } else if (!odd_rank && rank != size-1) { //if last rank number is even don't try and receive from the right yet
+      //   MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      // }
+      // if (!odd_rank && !(rank==0 && even_size)) {
+      //   MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      // } else if (odd_rank) {  //if last rank number is even don't try and receive from the right yet
+      //   MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      // } 
+      // if (even_size) {
+      //   if (rank==0) {
+      //     MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      //   }
+      //   else if (rank == size - 1)
+      //   {
+      //     MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      //   }
+      // }
     }
 
     // gettimeofday(&timstr, NULL);
@@ -255,13 +328,13 @@ int main(int argc, char *argv[])
 
   if (rank == 0) {
         /* write final values and free memory */
-/*     printf("==done==\n");
+    printf("==done==\n");
     printf("Reynolds number:\t\t%.12E\n", calc_reynolds(params, cells->speed0, obstacles, rank_p));
     printf("Elapsed Init time:\t\t\t%.6lf (s)\n", init_toc - init_tic);
     printf("Elapsed Compute time:\t\t\t%.6lf (s)\n", comp_toc - comp_tic);
     printf("Elapsed Collate time:\t\t\t%.6lf (s)\n", col_toc - col_tic);
-    printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic); */
-    printf("%.6lf\n", tot_toc - tot_tic);
+    printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic);
+    //printf("%.6lf\n", tot_toc - tot_tic);
     //printf("%.6lf\n", send_total);
     write_values(params, cells->speed0, obstacles, av_vals, rank_p);
     finalise(&params,&cells, &tmp_data, &tmp_cells, &tmp_data, &obstacles, &av_vals, &acc_obstacles);
