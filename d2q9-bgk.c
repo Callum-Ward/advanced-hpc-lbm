@@ -414,6 +414,7 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
       y_s = (jj == 1) ? (params.ny) : (jj - 1);
     }
 
+
 #pragma omp simd
     for (int ii = 0; ii < params.nx; ii++)
     {
