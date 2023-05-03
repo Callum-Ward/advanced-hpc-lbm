@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
   float *av_vals = NULL;                                                         /* a record of the av. velocity computed for each timestep */
   struct timeval timstr;                                                             /* structure to hold elapsed time */
   double tot_tic, tot_toc, init_tic, init_toc, comp_tic, comp_toc, col_tic, col_toc; /* floating point numbers to calculate elapsed wallclock time */
-  double send_tic, send_toc;
+  double send_tic, send_toc, mpi_tic, mpi_toc;
   double send_total;
   /* parse the command line */
   if (argc != 3)
@@ -122,6 +122,9 @@ int main(int argc, char *argv[])
 
   MPI_Comm_size(MPI_COMM_WORLD, &tmp_size);
   MPI_Comm_rank(MPI_COMM_WORLD, &tmp_rank);
+
+  gettimeofday(&timstr, NULL);
+  mpi_toc = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
 
   const int rank = tmp_rank;
   const int size = tmp_size;
@@ -166,10 +169,17 @@ int main(int argc, char *argv[])
     for (int tt = 0; tt < params.maxIters; tt++)
     {
 
+    gettimeofday(&timstr, NULL);
+    send_tic = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
+
     av_vals[tt] = timestep(params, cells, tmp_cells, obstacles, rank_p, rank, size, acc_obstacles) / tot_obs;    
     old = cells; // keep pointer to avoid leak
     cells = tmp_cells;
     tmp_cells = old;
+
+    gettimeofday(&timstr, NULL);
+    send_toc = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
+    send_total += send_toc - send_tic;
 
     // gettimeofday(&timstr, NULL);
     // send_tic = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
@@ -242,26 +252,6 @@ int main(int argc, char *argv[])
       
 
 
-      // if (odd_rank) //odd sends left
-      // {
-      //   MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      // } else if (!odd_rank && rank != size-1) { //if last rank number is even don't try and receive from the right yet
-      //   MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      // }
-      // if (!odd_rank && !(rank==0 && even_size)) {
-      //   MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      // } else if (odd_rank) {  //if last rank number is even don't try and receive from the right yet
-      //   MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      // } 
-      // if (even_size) {
-      //   if (rank==0) {
-      //     MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      //   }
-      //   else if (rank == size - 1)
-      //   {
-      //     MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      //   }
-      // }
     }
 
     // gettimeofday(&timstr, NULL);
@@ -328,12 +318,14 @@ int main(int argc, char *argv[])
 
   if (rank == 0) {
         /* write final values and free memory */
-    printf("==done==\n");
-    printf("Reynolds number:\t\t%.12E\n", calc_reynolds(params, cells->speed0, obstacles, rank_p));
-    printf("Elapsed Init time:\t\t\t%.6lf (s)\n", init_toc - init_tic);
-    printf("Elapsed Compute time:\t\t\t%.6lf (s)\n", comp_toc - comp_tic);
-    printf("Elapsed Collate time:\t\t\t%.6lf (s)\n", col_toc - col_tic);
-    printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic);
+    // printf("==done==\n");
+    // printf("Reynolds number:\t\t%.12E\n", calc_reynolds(params, cells->speed0, obstacles, rank_p));
+    // printf("Elapsed Init time:\t\t\t%.6lf (s)\n", init_toc - init_tic);
+    // printf("Elapsed Compute time:\t\t\t%.6lf (s)\n", comp_toc - comp_tic);
+    // printf("Elapsed Collate time:\t\t\t%.6lf (s)\n", col_toc - col_tic);
+    // printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic);
+
+    printf("%.6lf %.6lf %.6lf %.6lf %.6lf %.6lf\n", init_toc - mpi_toc, mpi_toc - tot_tic, send_total, (comp_toc - comp_tic) - send_total, col_toc - col_tic, tot_toc - tot_tic);
     //printf("%.6lf\n", tot_toc - tot_tic);
     //printf("%.6lf\n", send_total);
     write_values(params, cells->speed0, obstacles, av_vals, rank_p);
@@ -450,6 +442,28 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
 
   float tot_u = 0.f;
   // unsigned int tot_cells = 0;
+
+  __assume_aligned(obstacles, 64);
+  __assume_aligned(cells->speed0, 64);
+  __assume_aligned(cells->speed1, 64);
+  __assume_aligned(cells->speed2, 64);
+  __assume_aligned(cells->speed3, 64);
+  __assume_aligned(cells->speed4, 64);
+  __assume_aligned(cells->speed5, 64);
+  __assume_aligned(cells->speed6, 64);
+  __assume_aligned(cells->speed7, 64);
+  __assume_aligned(cells->speed8, 64);
+  __assume_aligned(tmp_cells->speed0, 64);
+  __assume_aligned(tmp_cells->speed1, 64);
+  __assume_aligned(tmp_cells->speed2, 64);
+  __assume_aligned(tmp_cells->speed3, 64);
+  __assume_aligned(tmp_cells->speed4, 64);
+  __assume_aligned(tmp_cells->speed5, 64);
+  __assume_aligned(tmp_cells->speed6, 64);
+  __assume_aligned(tmp_cells->speed7, 64);
+  __assume_aligned(tmp_cells->speed8, 64);
+  __assume((params.nx) % 2 == 0);
+  __assume((params.ny) % 2 == 0);
 
   for (int jj = 1; jj < (rank_p[rank].end_row-rank_p[rank].start_row) +2; jj++)
   {
