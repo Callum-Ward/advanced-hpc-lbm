@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
   float *tmp_data = NULL;
   int *obstacles = NULL;                                                             /* grid indicating which cells are blocked */
   int *acc_obstacles = NULL;
-  float *sendbuf1, *sendbuf2, *recbuf1, *recbuf2;                                                              /* grid indicating which cells are blocked */
+  float *send, *send1, *rec, *rec1;                                                              /* grid indicating which cells are blocked */
   float *av_vals = NULL;                                                         /* a record of the av. velocity computed for each timestep */
   struct timeval timstr;                                                             /* structure to hold elapsed time */
   double tot_tic, tot_toc, init_tic, init_toc, comp_tic, comp_toc, col_tic, col_toc; /* floating point numbers to calculate elapsed wallclock time */
@@ -139,30 +139,30 @@ int main(int argc, char *argv[])
 
   if (size > 1) {
     if (rank_p[rank].start_row == params.ny-2) {
-      sendbuf1 = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
+      send = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
     } else {
-      sendbuf1 = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
+      send = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
     }
     if (rank_p[rank].end_row == params.ny-2) {
-      sendbuf2 = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
+      send1 = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
     } else {
-      sendbuf2 = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
+      send1 = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
     }
     if (rank_p[right].start_row == params.ny-2) {
-      recbuf1 = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
+      rec = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
     } else {
-      recbuf1 = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
+      rec = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
     }
     if (rank_p[left].end_row == params.ny - 2) {
-      recbuf2 = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
+      rec1 = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
     } else {
-      recbuf2 = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
+      rec1 = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
     }
   }
-  // sendbuf1 = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
-  // sendbuf2 = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
-  // recbuf1 = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
-  // recbuf2 = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
+  // send = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
+  // send1 = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
+  // rec = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
+  // rec1 = (float *)_mm_malloc(sizeof(float) * params.nx * 9, 64);
 
   //printf("my rank: %d start: %d end: %d left: %d right: %d\n", rank, rank_p[rank].start_row, rank_p[rank].end_row, left, right);
   //printf("rank %d init complete\n",rank);
@@ -218,86 +218,86 @@ int main(int argc, char *argv[])
       if (rank_p[rank].start_row == (params.ny -2)) {
         for (size_t i = 0; i < params.nx; i++)
         {
-          sendbuf1[i] = cells->speed1[i + params.nx];
-          sendbuf1[i + params.nx] = cells->speed3[i + params.nx];
-          sendbuf1[i + params.nx * 2] = cells->speed4[i + params.nx];
-          sendbuf1[i + params.nx * 3] = cells->speed5[i + params.nx];
-          sendbuf1[i + params.nx * 4] = cells->speed6[i + params.nx];
-          sendbuf1[i + params.nx * 5] = cells->speed7[i + params.nx];
-          sendbuf1[i + params.nx * 6] = cells->speed8[i + params.nx];
+          send[i] = cells->speed1[i + params.nx];
+          send[i + params.nx] = cells->speed3[i + params.nx];
+          send[i + params.nx * 2] = cells->speed4[i + params.nx];
+          send[i + params.nx * 3] = cells->speed5[i + params.nx];
+          send[i + params.nx * 4] = cells->speed6[i + params.nx];
+          send[i + params.nx * 5] = cells->speed7[i + params.nx];
+          send[i + params.nx * 6] = cells->speed8[i + params.nx];
         }
-        MPI_Isend(sendbuf1, params.nx * 7, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &req[0]);
+        MPI_Isend(send, params.nx * 7, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &req[0]);
       } else {
      
         for (size_t i = 0; i < params.nx; i++)
         {
-          sendbuf1[i] = cells->speed4[i + params.nx];
-          sendbuf1[i + params.nx ] = cells->speed7[i + params.nx];
-          sendbuf1[i + params.nx * 2] = cells->speed8[i + params.nx];
+          send[i] = cells->speed4[i + params.nx];
+          send[i + params.nx ] = cells->speed7[i + params.nx];
+          send[i + params.nx * 2] = cells->speed8[i + params.nx];
         }
-        MPI_Isend(sendbuf1, params.nx * 3, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &req[0]);
+        MPI_Isend(send, params.nx * 3, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &req[0]);
       }
 
       // for (size_t i = 0; i < params.nx; i++) 
       // {
-      //   sendbuf1[i] = cells->speed0[i +params.nx];
-      //   sendbuf1[i + params.nx] = cells->speed1[i + params.nx];
-      //   sendbuf1[i + params.nx*2] = cells->speed2[i + params.nx];
-      //   sendbuf1[i + params.nx*3] = cells->speed3[i + params.nx];
-      //   sendbuf1[i + params.nx*4] = cells->speed4[i + params.nx];
-      //   sendbuf1[i + params.nx*5] = cells->speed5[i + params.nx];
-      //   sendbuf1[i + params.nx * 6] = cells->speed6[i + params.nx];
-      //   sendbuf1[i + params.nx*7] = cells->speed7[i + params.nx];
-      //   sendbuf1[i + params.nx*8] = cells->speed8[i + params.nx];
+      //   send[i] = cells->speed0[i +params.nx];
+      //   send[i + params.nx] = cells->speed1[i + params.nx];
+      //   send[i + params.nx*2] = cells->speed2[i + params.nx];
+      //   send[i + params.nx*3] = cells->speed3[i + params.nx];
+      //   send[i + params.nx*4] = cells->speed4[i + params.nx];
+      //   send[i + params.nx*5] = cells->speed5[i + params.nx];
+      //   send[i + params.nx * 6] = cells->speed6[i + params.nx];
+      //   send[i + params.nx*7] = cells->speed7[i + params.nx];
+      //   send[i + params.nx*8] = cells->speed8[i + params.nx];
       // }
 
 
       if (rank_p[right].start_row == params.ny -2) {
-        MPI_Irecv(recbuf1, params.nx * 7, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &req[1]);
+        MPI_Irecv(rec, params.nx * 7, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &req[1]);
       } else {
-        MPI_Irecv(recbuf1, params.nx * 3, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &req[1]);
+        MPI_Irecv(rec, params.nx * 3, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &req[1]);
       }
 
       // for (size_t i = 0; i < params.nx; i++)
       // {
-      //   sendbuf2[i] = cells->speed0[i + params.nx];
-      //   sendbuf2[i + params.nx] = cells->speed1[i + params.nx];
-      //   sendbuf2[i + params.nx * 2] = cells->speed2[i + (work_rows + 1) * params.nx];
-      //   sendbuf2[i + params.nx * 3] = cells->speed3[i + (work_rows + 1) * params.nx];
-      //   sendbuf2[i + params.nx * 4] = cells->speed4[i + (work_rows + 1) * params.nx];
-      //   sendbuf2[i + params.nx * 5] = cells->speed5[i + (work_rows + 1) * params.nx];
-      //   sendbuf2[i + params.nx * 6] = cells->speed6[i + (work_rows + 1) * params.nx];
-      //   sendbuf2[i + params.nx * 7] = cells->speed7[i + (work_rows + 1) * params.nx];
-      //   sendbuf2[i + params.nx * 8] = cells->speed8[i + (work_rows + 1) * params.nx];
+      //   send1[i] = cells->speed0[i + params.nx];
+      //   send1[i + params.nx] = cells->speed1[i + params.nx];
+      //   send1[i + params.nx * 2] = cells->speed2[i + (work_rows + 1) * params.nx];
+      //   send1[i + params.nx * 3] = cells->speed3[i + (work_rows + 1) * params.nx];
+      //   send1[i + params.nx * 4] = cells->speed4[i + (work_rows + 1) * params.nx];
+      //   send1[i + params.nx * 5] = cells->speed5[i + (work_rows + 1) * params.nx];
+      //   send1[i + params.nx * 6] = cells->speed6[i + (work_rows + 1) * params.nx];
+      //   send1[i + params.nx * 7] = cells->speed7[i + (work_rows + 1) * params.nx];
+      //   send1[i + params.nx * 8] = cells->speed8[i + (work_rows + 1) * params.nx];
       // }
 
       if (rank_p[rank].end_row == (params.ny - 2))
       {
         for (size_t i = 0; i < params.nx; i++)
         {
-          sendbuf2[i] = cells->speed1[i + (work_rows + 1)* params.nx];
-          sendbuf2[i + params.nx ] = cells->speed2[i + (work_rows + 1) * params.nx];
-          sendbuf2[i + params.nx * 2] = cells->speed3[i + (work_rows + 1) * params.nx];
-          sendbuf2[i + params.nx * 3] = cells->speed5[i + (work_rows + 1) * params.nx]; 
-          sendbuf2[i + params.nx * 4] = cells->speed6[i + (work_rows + 1) * params.nx];
-          sendbuf2[i + params.nx * 5] = cells->speed7[i + (work_rows + 1) * params.nx];
-          sendbuf2[i + params.nx * 6] = cells->speed8[i + (work_rows + 1) * params.nx];
+          send1[i] = cells->speed1[i + (work_rows + 1)* params.nx];
+          send1[i + params.nx ] = cells->speed2[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx * 2] = cells->speed3[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx * 3] = cells->speed5[i + (work_rows + 1) * params.nx]; 
+          send1[i + params.nx * 4] = cells->speed6[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx * 5] = cells->speed7[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx * 6] = cells->speed8[i + (work_rows + 1) * params.nx];
         }
-        MPI_Isend(sendbuf2, params.nx * 7, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &req[2]);
+        MPI_Isend(send1, params.nx * 7, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &req[2]);
       } else {
         for (size_t i = 0; i < params.nx; i++)
         {
-          sendbuf2[i] = cells->speed2[i + (work_rows + 1) * params.nx];
-          sendbuf2[i + params.nx] = cells->speed5[i + (work_rows + 1) * params.nx];
-          sendbuf2[i + params.nx * 2] = cells->speed6[i + (work_rows + 1) * params.nx];
+          send1[i] = cells->speed2[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx] = cells->speed5[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx * 2] = cells->speed6[i + (work_rows + 1) * params.nx];
         }
-        MPI_Isend(sendbuf2, params.nx * 3, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &req[2]);
+        MPI_Isend(send1, params.nx * 3, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &req[2]);
       }
 
       if (rank_p[left].end_row == params.ny -2) {
-        MPI_Irecv(recbuf2, params.nx * 7, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &req[3]);
+        MPI_Irecv(rec1, params.nx * 7, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &req[3]);
       } else {
-        MPI_Irecv(recbuf2, params.nx * 3, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &req[3]);
+        MPI_Irecv(rec1, params.nx * 3, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &req[3]);
       }
 
       MPI_Waitall(4, req, MPI_STATUSES_IGNORE);
@@ -307,56 +307,37 @@ int main(int argc, char *argv[])
       for (size_t i = 0; i < params.nx; i++)
       {
         if (rank_p[rank].end_row+1 == params.ny-2) {
-          cells->speed1[i + (work_rows + 2) * params.nx] = recbuf1[i];
-          cells->speed3[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx];
-          cells->speed4[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 2];
-          cells->speed5[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 3];
-          cells->speed6[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 4];
-          cells->speed7[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 5];
-          cells->speed8[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 6];
+          cells->speed1[i + (work_rows + 2) * params.nx] = rec[i];
+          cells->speed3[i + (work_rows + 2) * params.nx] = rec[i + params.nx];
+          cells->speed4[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 2];
+          cells->speed5[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 3];
+          cells->speed6[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 4];
+          cells->speed7[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 5];
+          cells->speed8[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 6];
         } else {
-          cells->speed4[i + (work_rows + 2) * params.nx] = recbuf1[i];
-          cells->speed7[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx];
-          cells->speed8[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 2];
+          cells->speed4[i + (work_rows + 2) * params.nx] = rec[i];
+          cells->speed7[i + (work_rows + 2) * params.nx] = rec[i + params.nx];
+          cells->speed8[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 2];
 
         }
 
         if (rank_p[rank].start_row - 1 == params.ny - 2)
         {
 
-          cells->speed1[i] = recbuf2[i];
-          cells->speed2[i] = recbuf2[i + params.nx];
-          cells->speed3[i] = recbuf2[i + params.nx * 2];
-          cells->speed5[i] = recbuf2[i + params.nx * 3];
-          cells->speed6[i] = recbuf2[i + params.nx * 4];
-          cells->speed7[i] = recbuf2[i + params.nx * 5];
-          cells->speed8[i] = recbuf2[i + params.nx * 6];
+          cells->speed1[i] = rec1[i];
+          cells->speed2[i] = rec1[i + params.nx];
+          cells->speed3[i] = rec1[i + params.nx * 2];
+          cells->speed5[i] = rec1[i + params.nx * 3];
+          cells->speed6[i] = rec1[i + params.nx * 4];
+          cells->speed7[i] = rec1[i + params.nx * 5];
+          cells->speed8[i] = rec1[i + params.nx * 6];
         } else {
-          cells->speed2[i] = recbuf2[i];
-          cells->speed5[i] = recbuf2[i + params.nx];
-          cells->speed6[i] = recbuf2[i + params.nx * 2];
+          cells->speed2[i] = rec1[i];
+          cells->speed5[i] = rec1[i + params.nx];
+          cells->speed6[i] = rec1[i + params.nx * 2];
           
         }
 
-          // cells->speed0[i + (work_rows + 2) * params.nx] = recbuf1[i];
-          // cells->speed1[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx];
-          // cells->speed2[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 2];
-          // cells->speed3[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 3];
-          // cells->speed4[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 4];
-          // cells->speed5[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 5];
-          // cells->speed6[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 6];
-          // cells->speed7[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 7];
-          // cells->speed8[i + (work_rows + 2) * params.nx] = recbuf1[i + params.nx * 8];
-
-          /* cells->speed0[i] = recbuf2[i];
-          cells->speed1[i] = recbuf2[i + params.nx];
-          cells->speed2[i] = recbuf2[i + params.nx * 2];
-          cells->speed3[i] = recbuf2[i + params.nx * 3];
-          cells->speed4[i] = recbuf2[i + params.nx * 4];
-          cells->speed5[i] = recbuf2[i + params.nx * 5];
-          cells->speed6[i] = recbuf2[i + params.nx * 6];
-          cells->speed7[i] = recbuf2[i + params.nx * 7];
-          cells->speed8[i] = recbuf2[i + params.nx * 8]; */
     }    
   }
 
@@ -424,14 +405,14 @@ int main(int argc, char *argv[])
 
   if (rank == 0) {
         /* write final values and free memory */
-    printf("==done==\n");
-    printf("Reynolds number:\t\t%.12E\n", calc_reynolds(params, cells->speed0, obstacles, rank_p));
-    printf("Elapsed Init time:\t\t\t%.6lf (s)\n", init_toc - init_tic);
-    printf("Elapsed Compute time:\t\t\t%.6lf (s)\n", comp_toc - comp_tic);
-    printf("Elapsed Collate time:\t\t\t%.6lf (s)\n", col_toc - col_tic);
-    printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic);
+    // printf("==done==\n");
+    // printf("Reynolds number:\t\t%.12E\n", calc_reynolds(params, cells->speed0, obstacles, rank_p));
+    // printf("Elapsed Init time:\t\t\t%.6lf (s)\n", init_toc - init_tic);
+    // printf("Elapsed Compute time:\t\t\t%.6lf (s)\n", comp_toc - comp_tic);
+    // printf("Elapsed Collate time:\t\t\t%.6lf (s)\n", col_toc - col_tic);
+    // printf("Elapsed Total time:\t\t\t%.6lf (s)\n", tot_toc - tot_tic);
 
-    //printf("%.6lf %.6lf %.6lf %.6lf %.6lf %.6lf\n", init_toc - mpi_toc, mpi_toc - tot_tic, send_total, (comp_toc - comp_tic) - send_total, col_toc - col_tic, tot_toc - tot_tic);
+    printf("%.6lf %.6lf %.6lf %.6lf %.6lf %.6lf\n", init_toc - mpi_toc, mpi_toc - tot_tic, send_total, (comp_toc - comp_tic) - send_total, col_toc - col_tic, tot_toc - tot_tic);
     //printf("%.6lf\n", tot_toc - tot_tic);
     //printf("%.6lf\n", send_total);
     write_values(params, cells->speed0, obstacles, av_vals, rank_p);
@@ -441,10 +422,10 @@ int main(int argc, char *argv[])
       cells_all = NULL;
       _mm_free(obstacles_all);
       obstacles_all = NULL;
-      _mm_free(sendbuf1);
-      _mm_free(sendbuf2);
-      _mm_free(recbuf1);
-      _mm_free(recbuf2);
+      _mm_free(send);
+      _mm_free(send1);
+      _mm_free(rec);
+      _mm_free(rec1);
     }
   }
   MPI_Finalize();
@@ -580,6 +561,7 @@ float collision(const t_param params, t_speed *restrict cells, t_speed *restrict
     //printf("jj%d\n",jj);
     int y_n;
     int y_s;
+
 
     if (size > 1) {
       y_n = jj + 1;

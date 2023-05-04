@@ -11,11 +11,11 @@ Begin optimization report for: main(int, char **)
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at d2q9-bgk.c(459,3) inlined into d2q9-bgk.c(137,3)
-   remark #15389: vectorization support: reference rank_p->start_row[r] has unaligned access   [ d2q9-bgk.c(461,5) ]
+LOOP BEGIN at d2q9-bgk.c(440,3) inlined into d2q9-bgk.c(137,3)
+   remark #15389: vectorization support: reference rank_p->start_row[r] has unaligned access   [ d2q9-bgk.c(442,5) ]
    remark #15381: vectorization support: unaligned access used inside loop body
-   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_p->start_row[r]>, stride is 2   [ d2q9-bgk.c(461,5) ]
-   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_p->end_row[r]>, stride is 2   [ d2q9-bgk.c(462,5) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_p->start_row[r]>, stride is 2   [ d2q9-bgk.c(442,5) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_p->end_row[r]>, stride is 2   [ d2q9-bgk.c(443,5) ]
    remark #15305: vectorization support: vector length 8
    remark #15300: LOOP WAS VECTORIZED
    remark #15453: unmasked strided stores: 2 
@@ -26,23 +26,23 @@ LOOP BEGIN at d2q9-bgk.c(459,3) inlined into d2q9-bgk.c(137,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(459,3) inlined into d2q9-bgk.c(137,3)
+LOOP BEGIN at d2q9-bgk.c(440,3) inlined into d2q9-bgk.c(137,3)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(468,5) inlined into d2q9-bgk.c(137,3)
+LOOP BEGIN at d2q9-bgk.c(449,5) inlined into d2q9-bgk.c(137,3)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed ANTI dependence between shift (470:7) and shift (474:9)
-   remark #15346: vector dependence: assumed FLOW dependence between shift (474:9) and shift (470:7)
-   remark #15346: vector dependence: assumed ANTI dependence between shift (470:7) and shift (474:9)
+   remark #15346: vector dependence: assumed ANTI dependence between shift (451:7) and shift (455:9)
+   remark #15346: vector dependence: assumed FLOW dependence between shift (455:9) and shift (451:7)
+   remark #15346: vector dependence: assumed ANTI dependence between shift (451:7) and shift (455:9)
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(468,5) inlined into d2q9-bgk.c(137,3)
+LOOP BEGIN at d2q9-bgk.c(449,5) inlined into d2q9-bgk.c(137,3)
 <Remainder>
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(876,3) inlined into d2q9-bgk.c(137,3)
-   remark #15316: simd loop was not vectorized: scalar assignment in simd loop is prohibited, consider private, lastprivate or reduction clauses   [ d2q9-bgk.c(900,11) ]
+LOOP BEGIN at d2q9-bgk.c(858,3) inlined into d2q9-bgk.c(137,3)
+   remark #15316: simd loop was not vectorized: scalar assignment in simd loop is prohibited, consider private, lastprivate or reduction clauses   [ d2q9-bgk.c(882,11) ]
    remark #15552: loop was not vectorized with "simd"
    remark #15451: unmasked unaligned unit stride stores: 9 
    remark #15457: masked unaligned unit stride stores: 1 
@@ -52,18 +52,18 @@ LOOP BEGIN at d2q9-bgk.c(876,3) inlined into d2q9-bgk.c(137,3)
    remark #15478: estimated potential speedup: 5.420 
    remark #15488: --- end vector cost summary ---
 
-   LOOP BEGIN at d2q9-bgk.c(878,5) inlined into d2q9-bgk.c(137,3)
-      remark #15389: vectorization support: reference cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(881,9) ]
-      remark #15389: vectorization support: reference cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(883,9) ]
-      remark #15389: vectorization support: reference cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(884,9) ]
-      remark #15389: vectorization support: reference cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(885,9) ]
-      remark #15389: vectorization support: reference cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(886,9) ]
-      remark #15389: vectorization support: reference cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(889,9) ]
-      remark #15389: vectorization support: reference cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(890,9) ]
-      remark #15389: vectorization support: reference cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(891,9) ]
-      remark #15389: vectorization support: reference cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(892,9) ]
-      remark #15389: vectorization support: reference obstacles[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(897,11) ]
-      remark #15388: vectorization support: reference acc_obstacles[ii] has aligned access   [ d2q9-bgk.c(900,11) ]
+   LOOP BEGIN at d2q9-bgk.c(860,5) inlined into d2q9-bgk.c(137,3)
+      remark #15389: vectorization support: reference cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(863,9) ]
+      remark #15389: vectorization support: reference cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(865,9) ]
+      remark #15389: vectorization support: reference cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(866,9) ]
+      remark #15389: vectorization support: reference cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(867,9) ]
+      remark #15389: vectorization support: reference cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(868,9) ]
+      remark #15389: vectorization support: reference cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(871,9) ]
+      remark #15389: vectorization support: reference cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(872,9) ]
+      remark #15389: vectorization support: reference cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(873,9) ]
+      remark #15389: vectorization support: reference cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(874,9) ]
+      remark #15389: vectorization support: reference obstacles[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(879,11) ]
+      remark #15388: vectorization support: reference acc_obstacles[ii] has aligned access   [ d2q9-bgk.c(882,11) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 8
       remark #15309: vectorization support: normalized vectorization overhead 0.678
@@ -78,25 +78,25 @@ LOOP BEGIN at d2q9-bgk.c(876,3) inlined into d2q9-bgk.c(137,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at d2q9-bgk.c(878,5) inlined into d2q9-bgk.c(137,3)
+   LOOP BEGIN at d2q9-bgk.c(860,5) inlined into d2q9-bgk.c(137,3)
    <Remainder loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at d2q9-bgk.c(878,5) inlined into d2q9-bgk.c(137,3)
+   LOOP BEGIN at d2q9-bgk.c(860,5) inlined into d2q9-bgk.c(137,3)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at d2q9-bgk.c(878,5) inlined into d2q9-bgk.c(137,3)
-      remark #15389: vectorization support: reference cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(881,9) ]
-      remark #15389: vectorization support: reference cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(883,9) ]
-      remark #15389: vectorization support: reference cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(884,9) ]
-      remark #15389: vectorization support: reference cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(885,9) ]
-      remark #15389: vectorization support: reference cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(886,9) ]
-      remark #15389: vectorization support: reference cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(889,9) ]
-      remark #15389: vectorization support: reference cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(890,9) ]
-      remark #15389: vectorization support: reference cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(891,9) ]
-      remark #15389: vectorization support: reference cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(892,9) ]
-      remark #15389: vectorization support: reference obstacles[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(897,11) ]
+   LOOP BEGIN at d2q9-bgk.c(860,5) inlined into d2q9-bgk.c(137,3)
+      remark #15389: vectorization support: reference cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(863,9) ]
+      remark #15389: vectorization support: reference cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(865,9) ]
+      remark #15389: vectorization support: reference cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(866,9) ]
+      remark #15389: vectorization support: reference cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(867,9) ]
+      remark #15389: vectorization support: reference cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(868,9) ]
+      remark #15389: vectorization support: reference cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(871,9) ]
+      remark #15389: vectorization support: reference cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(872,9) ]
+      remark #15389: vectorization support: reference cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(873,9) ]
+      remark #15389: vectorization support: reference cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(874,9) ]
+      remark #15389: vectorization support: reference obstacles[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(879,11) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 8
       remark #15309: vectorization support: normalized vectorization overhead 0.870
@@ -110,12 +110,12 @@ LOOP BEGIN at d2q9-bgk.c(876,3) inlined into d2q9-bgk.c(137,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at d2q9-bgk.c(878,5) inlined into d2q9-bgk.c(137,3)
+   LOOP BEGIN at d2q9-bgk.c(860,5) inlined into d2q9-bgk.c(137,3)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(917,3) inlined into d2q9-bgk.c(137,3)
+LOOP BEGIN at d2q9-bgk.c(899,3) inlined into d2q9-bgk.c(137,3)
    remark #15523: loop was not vectorized: loop control variable tot_obs was found, but loop iteration count cannot be computed before executing the loop
 LOOP END
 
@@ -127,20 +127,20 @@ LOOP BEGIN at d2q9-bgk.c(190,3)
    LOOP END
 
    LOOP BEGIN at d2q9-bgk.c(219,9)
-      remark #15389: vectorization support: reference sendbuf1[i] has unaligned access   [ d2q9-bgk.c(221,11) ]
-      remark #15389: vectorization support: reference cells->speed1[i+params.nx] has unaligned access   [ d2q9-bgk.c(221,25) ]
-      remark #15389: vectorization support: reference sendbuf1[i+params.nx] has unaligned access   [ d2q9-bgk.c(222,11) ]
-      remark #15389: vectorization support: reference cells->speed3[i+params.nx] has unaligned access   [ d2q9-bgk.c(222,37) ]
-      remark #15389: vectorization support: reference sendbuf1[i+params.nx*2] has unaligned access   [ d2q9-bgk.c(223,11) ]
-      remark #15389: vectorization support: reference cells->speed4[i+params.nx] has unaligned access   [ d2q9-bgk.c(223,41) ]
-      remark #15389: vectorization support: reference sendbuf1[i+params.nx*3] has unaligned access   [ d2q9-bgk.c(224,11) ]
-      remark #15389: vectorization support: reference cells->speed5[i+params.nx] has unaligned access   [ d2q9-bgk.c(224,41) ]
-      remark #15389: vectorization support: reference sendbuf1[i+params.nx*4] has unaligned access   [ d2q9-bgk.c(225,11) ]
-      remark #15389: vectorization support: reference cells->speed6[i+params.nx] has unaligned access   [ d2q9-bgk.c(225,41) ]
-      remark #15389: vectorization support: reference sendbuf1[i+params.nx*5] has unaligned access   [ d2q9-bgk.c(226,11) ]
-      remark #15389: vectorization support: reference cells->speed7[i+params.nx] has unaligned access   [ d2q9-bgk.c(226,41) ]
-      remark #15388: vectorization support: reference sendbuf1[i+params.nx*6] has aligned access   [ d2q9-bgk.c(227,11) ]
-      remark #15389: vectorization support: reference cells->speed8[i+params.nx] has unaligned access   [ d2q9-bgk.c(227,41) ]
+      remark #15389: vectorization support: reference send[i] has unaligned access   [ d2q9-bgk.c(221,11) ]
+      remark #15389: vectorization support: reference cells->speed1[i+params.nx] has unaligned access   [ d2q9-bgk.c(221,21) ]
+      remark #15389: vectorization support: reference send[i+params.nx] has unaligned access   [ d2q9-bgk.c(222,11) ]
+      remark #15389: vectorization support: reference cells->speed3[i+params.nx] has unaligned access   [ d2q9-bgk.c(222,33) ]
+      remark #15389: vectorization support: reference send[i+params.nx*2] has unaligned access   [ d2q9-bgk.c(223,11) ]
+      remark #15389: vectorization support: reference cells->speed4[i+params.nx] has unaligned access   [ d2q9-bgk.c(223,37) ]
+      remark #15389: vectorization support: reference send[i+params.nx*3] has unaligned access   [ d2q9-bgk.c(224,11) ]
+      remark #15389: vectorization support: reference cells->speed5[i+params.nx] has unaligned access   [ d2q9-bgk.c(224,37) ]
+      remark #15389: vectorization support: reference send[i+params.nx*4] has unaligned access   [ d2q9-bgk.c(225,11) ]
+      remark #15389: vectorization support: reference cells->speed6[i+params.nx] has unaligned access   [ d2q9-bgk.c(225,37) ]
+      remark #15389: vectorization support: reference send[i+params.nx*5] has unaligned access   [ d2q9-bgk.c(226,11) ]
+      remark #15389: vectorization support: reference cells->speed7[i+params.nx] has unaligned access   [ d2q9-bgk.c(226,37) ]
+      remark #15388: vectorization support: reference send[i+params.nx*6] has aligned access   [ d2q9-bgk.c(227,11) ]
+      remark #15389: vectorization support: reference cells->speed8[i+params.nx] has unaligned access   [ d2q9-bgk.c(227,37) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 8
       remark #15309: vectorization support: normalized vectorization overhead 0.907
@@ -165,12 +165,12 @@ LOOP BEGIN at d2q9-bgk.c(190,3)
    LOOP END
 
    LOOP BEGIN at d2q9-bgk.c(232,9)
-      remark #15389: vectorization support: reference sendbuf1[i] has unaligned access   [ d2q9-bgk.c(234,11) ]
-      remark #15389: vectorization support: reference cells->speed4[i+params.nx] has unaligned access   [ d2q9-bgk.c(234,25) ]
-      remark #15389: vectorization support: reference sendbuf1[i+params.nx] has unaligned access   [ d2q9-bgk.c(235,11) ]
-      remark #15389: vectorization support: reference cells->speed7[i+params.nx] has unaligned access   [ d2q9-bgk.c(235,38) ]
-      remark #15388: vectorization support: reference sendbuf1[i+params.nx*2] has aligned access   [ d2q9-bgk.c(236,11) ]
-      remark #15389: vectorization support: reference cells->speed8[i+params.nx] has unaligned access   [ d2q9-bgk.c(236,41) ]
+      remark #15389: vectorization support: reference send[i] has unaligned access   [ d2q9-bgk.c(234,11) ]
+      remark #15389: vectorization support: reference cells->speed4[i+params.nx] has unaligned access   [ d2q9-bgk.c(234,21) ]
+      remark #15389: vectorization support: reference send[i+params.nx] has unaligned access   [ d2q9-bgk.c(235,11) ]
+      remark #15389: vectorization support: reference cells->speed7[i+params.nx] has unaligned access   [ d2q9-bgk.c(235,34) ]
+      remark #15388: vectorization support: reference send[i+params.nx*2] has aligned access   [ d2q9-bgk.c(236,11) ]
+      remark #15389: vectorization support: reference cells->speed8[i+params.nx] has unaligned access   [ d2q9-bgk.c(236,37) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 8
       remark #15309: vectorization support: normalized vectorization overhead 1.136
@@ -195,20 +195,20 @@ LOOP BEGIN at d2q9-bgk.c(190,3)
    LOOP END
 
    LOOP BEGIN at d2q9-bgk.c(276,9)
-      remark #15389: vectorization support: reference sendbuf2[i] has unaligned access   [ d2q9-bgk.c(278,11) ]
-      remark #15389: vectorization support: reference cells->speed1[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(278,25) ]
-      remark #15389: vectorization support: reference sendbuf2[i+params.nx] has unaligned access   [ d2q9-bgk.c(279,11) ]
-      remark #15389: vectorization support: reference cells->speed2[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(279,38) ]
-      remark #15389: vectorization support: reference sendbuf2[i+params.nx*2] has unaligned access   [ d2q9-bgk.c(280,11) ]
-      remark #15389: vectorization support: reference cells->speed3[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(280,41) ]
-      remark #15389: vectorization support: reference sendbuf2[i+params.nx*3] has unaligned access   [ d2q9-bgk.c(281,11) ]
-      remark #15389: vectorization support: reference cells->speed5[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(281,41) ]
-      remark #15389: vectorization support: reference sendbuf2[i+params.nx*4] has unaligned access   [ d2q9-bgk.c(282,11) ]
-      remark #15389: vectorization support: reference cells->speed6[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(282,41) ]
-      remark #15389: vectorization support: reference sendbuf2[i+params.nx*5] has unaligned access   [ d2q9-bgk.c(283,11) ]
-      remark #15389: vectorization support: reference cells->speed7[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(283,41) ]
-      remark #15388: vectorization support: reference sendbuf2[i+params.nx*6] has aligned access   [ d2q9-bgk.c(284,11) ]
-      remark #15389: vectorization support: reference cells->speed8[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(284,41) ]
+      remark #15389: vectorization support: reference send1[i] has unaligned access   [ d2q9-bgk.c(278,11) ]
+      remark #15389: vectorization support: reference cells->speed1[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(278,22) ]
+      remark #15389: vectorization support: reference send1[i+params.nx] has unaligned access   [ d2q9-bgk.c(279,11) ]
+      remark #15389: vectorization support: reference cells->speed2[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(279,35) ]
+      remark #15389: vectorization support: reference send1[i+params.nx*2] has unaligned access   [ d2q9-bgk.c(280,11) ]
+      remark #15389: vectorization support: reference cells->speed3[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(280,38) ]
+      remark #15389: vectorization support: reference send1[i+params.nx*3] has unaligned access   [ d2q9-bgk.c(281,11) ]
+      remark #15389: vectorization support: reference cells->speed5[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(281,38) ]
+      remark #15389: vectorization support: reference send1[i+params.nx*4] has unaligned access   [ d2q9-bgk.c(282,11) ]
+      remark #15389: vectorization support: reference cells->speed6[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(282,38) ]
+      remark #15389: vectorization support: reference send1[i+params.nx*5] has unaligned access   [ d2q9-bgk.c(283,11) ]
+      remark #15389: vectorization support: reference cells->speed7[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(283,38) ]
+      remark #15388: vectorization support: reference send1[i+params.nx*6] has aligned access   [ d2q9-bgk.c(284,11) ]
+      remark #15389: vectorization support: reference cells->speed8[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(284,38) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 8
       remark #15309: vectorization support: normalized vectorization overhead 0.907
@@ -233,12 +233,12 @@ LOOP BEGIN at d2q9-bgk.c(190,3)
    LOOP END
 
    LOOP BEGIN at d2q9-bgk.c(288,9)
-      remark #15389: vectorization support: reference sendbuf2[i] has unaligned access   [ d2q9-bgk.c(290,11) ]
-      remark #15389: vectorization support: reference cells->speed2[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(290,25) ]
-      remark #15389: vectorization support: reference sendbuf2[i+params.nx] has unaligned access   [ d2q9-bgk.c(291,11) ]
-      remark #15389: vectorization support: reference cells->speed5[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(291,37) ]
-      remark #15388: vectorization support: reference sendbuf2[i+params.nx*2] has aligned access   [ d2q9-bgk.c(292,11) ]
-      remark #15389: vectorization support: reference cells->speed6[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(292,41) ]
+      remark #15389: vectorization support: reference send1[i] has unaligned access   [ d2q9-bgk.c(290,11) ]
+      remark #15389: vectorization support: reference cells->speed2[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(290,22) ]
+      remark #15389: vectorization support: reference send1[i+params.nx] has unaligned access   [ d2q9-bgk.c(291,11) ]
+      remark #15389: vectorization support: reference cells->speed5[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(291,34) ]
+      remark #15388: vectorization support: reference send1[i+params.nx*2] has aligned access   [ d2q9-bgk.c(292,11) ]
+      remark #15389: vectorization support: reference cells->speed6[i+(work_rows+1)*params.nx] has unaligned access   [ d2q9-bgk.c(292,38) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 8
       remark #15309: vectorization support: normalized vectorization overhead 1.136
@@ -277,46 +277,30 @@ LOOP BEGIN at d2q9-bgk.c(190,3)
    LOOP END
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(388,3)
+LOOP BEGIN at d2q9-bgk.c(369,3)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed ANTI dependence between obs_sum (392:5) and obs_sum (394:5)
-   remark #15346: vector dependence: assumed FLOW dependence between obs_sum (394:5) and obs_sum (392:5)
+   remark #15346: vector dependence: assumed ANTI dependence between obs_sum (373:5) and obs_sum (375:5)
+   remark #15346: vector dependence: assumed FLOW dependence between obs_sum (375:5) and obs_sum (373:5)
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(694,3) inlined into d2q9-bgk.c(428,43)
+LOOP BEGIN at d2q9-bgk.c(1020,3) inlined into d2q9-bgk.c(418,5)
+   remark #15382: vectorization support: call to function fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1068,7) ]
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
-   remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-   remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-   remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1068:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1068:7)
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1068:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1068:7)
 
-   LOOP BEGIN at d2q9-bgk.c(697,5) inlined into d2q9-bgk.c(428,43)
+   LOOP BEGIN at d2q9-bgk.c(1022,5) inlined into d2q9-bgk.c(418,5)
+      remark #15382: vectorization support: call to function fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1068,7) ]
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
-      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
+      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (1026:9) and jj_offset (1042:51)
+      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (1042:51) and jj_offset (1026:9)
+      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (1042:51) and jj_offset (1026:9)
+      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (1026:9) and jj_offset (1042:51)
    LOOP END
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(1038,3) inlined into d2q9-bgk.c(437,5)
-   remark #15382: vectorization support: call to function fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1086,7) ]
-   remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1086:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1086:7)
-   remark #15346: vector dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1086:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1086:7)
-
-   LOOP BEGIN at d2q9-bgk.c(1040,5) inlined into d2q9-bgk.c(437,5)
-      remark #15382: vectorization support: call to function fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1086,7) ]
-      remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (1044:9) and jj_offset (1060:51)
-      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (1060:51) and jj_offset (1044:9)
-      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (1060:51) and jj_offset (1044:9)
-      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (1044:9) and jj_offset (1060:51)
-   LOOP END
-LOOP END
-
-LOOP BEGIN at d2q9-bgk.c(1099,3) inlined into d2q9-bgk.c(437,5)
-   remark #15527: loop was not vectorized: function call to fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1101,5) ]
+LOOP BEGIN at d2q9-bgk.c(1081,3) inlined into d2q9-bgk.c(418,5)
+   remark #15527: loop was not vectorized: function call to fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1083,5) ]
 LOOP END
 ===========================================================================
 
@@ -325,60 +309,60 @@ Begin optimization report for: collision(const t_param, t_speed *__restrict__, t
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at d2q9-bgk.c(578,3)
+LOOP BEGIN at d2q9-bgk.c(559,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at d2q9-bgk.c(595,5)
+   LOOP BEGIN at d2q9-bgk.c(577,5)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at d2q9-bgk.c(595,5)
-      remark #15389: vectorization support: reference cells->speed5[x_w+y_s*params.nx] has unaligned access   [ d2q9-bgk.c(600,31) ]
-      remark #15389: vectorization support: reference cells->speed2[ii+y_s*params.nx] has unaligned access   [ d2q9-bgk.c(601,31) ]
-      remark #15389: vectorization support: reference cells->speed1[x_w+jj*params.nx] has unaligned access   [ d2q9-bgk.c(603,31) ]
-      remark #15389: vectorization support: reference cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(604,31) ]
-      remark #15389: vectorization support: reference cells->speed8[x_w+y_n*params.nx] has unaligned access   [ d2q9-bgk.c(606,31) ]
-      remark #15389: vectorization support: reference cells->speed4[ii+y_n*params.nx] has unaligned access   [ d2q9-bgk.c(607,31) ]
-      remark #15389: vectorization support: reference tmp_cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(614,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(615,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(616,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(617,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(618,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(619,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(620,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(621,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(662,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(663,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(664,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(665,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(666,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(667,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(668,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(669,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(670,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(614,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(615,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(616,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(617,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(618,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(619,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(620,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(621,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(663,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(664,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(665,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(666,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(667,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(668,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(669,9) ]
-      remark #15389: vectorization support: reference tmp_cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(670,9) ]
+   LOOP BEGIN at d2q9-bgk.c(577,5)
+      remark #15389: vectorization support: reference cells->speed5[x_w+y_s*params.nx] has unaligned access   [ d2q9-bgk.c(582,31) ]
+      remark #15389: vectorization support: reference cells->speed2[ii+y_s*params.nx] has unaligned access   [ d2q9-bgk.c(583,31) ]
+      remark #15389: vectorization support: reference cells->speed1[x_w+jj*params.nx] has unaligned access   [ d2q9-bgk.c(585,31) ]
+      remark #15389: vectorization support: reference cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(586,31) ]
+      remark #15389: vectorization support: reference cells->speed8[x_w+y_n*params.nx] has unaligned access   [ d2q9-bgk.c(588,31) ]
+      remark #15389: vectorization support: reference cells->speed4[ii+y_n*params.nx] has unaligned access   [ d2q9-bgk.c(589,31) ]
+      remark #15389: vectorization support: reference tmp_cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(596,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(597,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(598,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(599,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(600,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(601,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(602,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(603,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(644,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(645,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(646,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(647,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(648,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(649,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(650,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(651,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(652,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(596,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(597,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(598,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(599,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(600,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(601,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(602,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(603,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(645,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(646,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(647,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(648,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(649,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(650,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(651,9) ]
+      remark #15389: vectorization support: reference tmp_cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(652,9) ]
       remark #15381: vectorization support: unaligned access used inside loop body
-      remark #15415: vectorization support: irregularly indexed load was generated for the variable <cells->speed6[x_e+y_s*params.nx]>, part of index is conditional   [ d2q9-bgk.c(602,31) ]
-      remark #15415: vectorization support: irregularly indexed load was generated for the variable <cells->speed3[x_e+jj*params.nx]>, part of index is conditional   [ d2q9-bgk.c(605,31) ]
-      remark #15415: vectorization support: irregularly indexed load was generated for the variable <cells->speed7[x_e+y_n*params.nx]>, part of index is conditional   [ d2q9-bgk.c(608,31) ]
+      remark #15415: vectorization support: irregularly indexed load was generated for the variable <cells->speed6[x_e+y_s*params.nx]>, part of index is conditional   [ d2q9-bgk.c(584,31) ]
+      remark #15415: vectorization support: irregularly indexed load was generated for the variable <cells->speed3[x_e+jj*params.nx]>, part of index is conditional   [ d2q9-bgk.c(587,31) ]
+      remark #15415: vectorization support: irregularly indexed load was generated for the variable <cells->speed7[x_e+y_n*params.nx]>, part of index is conditional   [ d2q9-bgk.c(590,31) ]
       remark #15305: vectorization support: vector length 8
       remark #15309: vectorization support: normalized vectorization overhead 0.281
-      remark #15355: vectorization support: tot_u is float type reduction   [ d2q9-bgk.c(553,15) ]
+      remark #15355: vectorization support: tot_u is float type reduction   [ d2q9-bgk.c(534,15) ]
       remark #15301: SIMD LOOP WAS VECTORIZED
       remark #15450: unmasked unaligned unit stride loads: 23 
       remark #15451: unmasked unaligned unit stride stores: 16 
@@ -392,7 +376,7 @@ LOOP BEGIN at d2q9-bgk.c(578,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at d2q9-bgk.c(595,5)
+   LOOP BEGIN at d2q9-bgk.c(577,5)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
@@ -403,19 +387,19 @@ Begin optimization report for: accelerate_flow(const t_param, t_speed *__restric
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at d2q9-bgk.c(521,3)
-   remark #15388: vectorization support: reference cells->speed1[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(528,7) ]
-   remark #15388: vectorization support: reference cells->speed1[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(528,7) ]
-   remark #15388: vectorization support: reference cells->speed5[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(529,7) ]
-   remark #15388: vectorization support: reference cells->speed5[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(529,7) ]
-   remark #15388: vectorization support: reference cells->speed8[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(530,7) ]
-   remark #15388: vectorization support: reference cells->speed8[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(530,7) ]
-   remark #15388: vectorization support: reference cells->speed3[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(532,7) ]
-   remark #15388: vectorization support: reference cells->speed3[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(532,7) ]
-   remark #15388: vectorization support: reference cells->speed6[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(533,7) ]
-   remark #15388: vectorization support: reference cells->speed6[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(533,7) ]
-   remark #15388: vectorization support: reference cells->speed7[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(534,7) ]
-   remark #15388: vectorization support: reference cells->speed7[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(534,7) ]
+LOOP BEGIN at d2q9-bgk.c(502,3)
+   remark #15388: vectorization support: reference cells->speed1[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(509,7) ]
+   remark #15388: vectorization support: reference cells->speed1[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(509,7) ]
+   remark #15388: vectorization support: reference cells->speed5[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(510,7) ]
+   remark #15388: vectorization support: reference cells->speed5[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(510,7) ]
+   remark #15388: vectorization support: reference cells->speed8[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(511,7) ]
+   remark #15388: vectorization support: reference cells->speed8[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(511,7) ]
+   remark #15388: vectorization support: reference cells->speed3[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(513,7) ]
+   remark #15388: vectorization support: reference cells->speed3[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(513,7) ]
+   remark #15388: vectorization support: reference cells->speed6[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(514,7) ]
+   remark #15388: vectorization support: reference cells->speed6[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(514,7) ]
+   remark #15388: vectorization support: reference cells->speed7[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(515,7) ]
+   remark #15388: vectorization support: reference cells->speed7[ii+(jj+1)*params.nx] has aligned access   [ d2q9-bgk.c(515,7) ]
    remark #15305: vectorization support: vector length 8
    remark #15309: vectorization support: normalized vectorization overhead 0.130
    remark #15301: SIMD LOOP WAS VECTORIZED
@@ -428,7 +412,7 @@ LOOP BEGIN at d2q9-bgk.c(521,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(521,3)
+LOOP BEGIN at d2q9-bgk.c(502,3)
 <Remainder loop for vectorization>
 LOOP END
 ===========================================================================
@@ -438,11 +422,11 @@ Begin optimization report for: get_rank_sizes(const int, const int, const int, r
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at d2q9-bgk.c(459,3)
-   remark #15389: vectorization support: reference rank_work->start_row[r] has unaligned access   [ d2q9-bgk.c(461,5) ]
+LOOP BEGIN at d2q9-bgk.c(440,3)
+   remark #15389: vectorization support: reference rank_work->start_row[r] has unaligned access   [ d2q9-bgk.c(442,5) ]
    remark #15381: vectorization support: unaligned access used inside loop body
-   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_work->start_row[r]>, stride is 2   [ d2q9-bgk.c(461,5) ]
-   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_work->end_row[r]>, stride is 2   [ d2q9-bgk.c(462,5) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_work->start_row[r]>, stride is 2   [ d2q9-bgk.c(442,5) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_work->end_row[r]>, stride is 2   [ d2q9-bgk.c(443,5) ]
    remark #15305: vectorization support: vector length 8
    remark #15309: vectorization support: normalized vectorization overhead 0.250
    remark #15300: LOOP WAS VECTORIZED
@@ -454,18 +438,18 @@ LOOP BEGIN at d2q9-bgk.c(459,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(459,3)
+LOOP BEGIN at d2q9-bgk.c(440,3)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(468,5)
+LOOP BEGIN at d2q9-bgk.c(449,5)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed ANTI dependence between shift (470:7) and shift (474:9)
-   remark #15346: vector dependence: assumed FLOW dependence between shift (474:9) and shift (470:7)
-   remark #15346: vector dependence: assumed ANTI dependence between shift (470:7) and shift (474:9)
+   remark #15346: vector dependence: assumed ANTI dependence between shift (451:7) and shift (455:9)
+   remark #15346: vector dependence: assumed FLOW dependence between shift (455:9) and shift (451:7)
+   remark #15346: vector dependence: assumed ANTI dependence between shift (451:7) and shift (455:9)
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(468,5)
+LOOP BEGIN at d2q9-bgk.c(449,5)
 <Remainder>
 LOOP END
 ===========================================================================
@@ -475,19 +459,19 @@ Begin optimization report for: av_velocity(const t_param, float *__restrict__, i
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at d2q9-bgk.c(694,3)
+LOOP BEGIN at d2q9-bgk.c(676,3)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
-   remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-   remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-   remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
+   remark #15346: vector dependence: assumed FLOW dependence between jj_offset (684:9) and jj_offset (695:51)
+   remark #15346: vector dependence: assumed ANTI dependence between jj_offset (695:51) and jj_offset (684:9)
+   remark #15346: vector dependence: assumed ANTI dependence between jj_offset (695:51) and jj_offset (684:9)
+   remark #15346: vector dependence: assumed FLOW dependence between jj_offset (684:9) and jj_offset (695:51)
 
-   LOOP BEGIN at d2q9-bgk.c(697,5)
+   LOOP BEGIN at d2q9-bgk.c(679,5)
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
-      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
+      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (684:9) and jj_offset (695:51)
+      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (695:51) and jj_offset (684:9)
+      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (695:51) and jj_offset (684:9)
+      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (684:9) and jj_offset (695:51)
    LOOP END
 LOOP END
 ===========================================================================
@@ -497,19 +481,19 @@ Begin optimization report for: calc_reynolds(const t_param, float *__restrict__,
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at d2q9-bgk.c(694,3) inlined into d2q9-bgk.c(990,10)
+LOOP BEGIN at d2q9-bgk.c(676,3) inlined into d2q9-bgk.c(972,10)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
-   remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-   remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-   remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
+   remark #15346: vector dependence: assumed FLOW dependence between jj_offset (684:9) and jj_offset (695:51)
+   remark #15346: vector dependence: assumed ANTI dependence between jj_offset (695:51) and jj_offset (684:9)
+   remark #15346: vector dependence: assumed ANTI dependence between jj_offset (695:51) and jj_offset (684:9)
+   remark #15346: vector dependence: assumed FLOW dependence between jj_offset (684:9) and jj_offset (695:51)
 
-   LOOP BEGIN at d2q9-bgk.c(697,5) inlined into d2q9-bgk.c(990,10)
+   LOOP BEGIN at d2q9-bgk.c(679,5) inlined into d2q9-bgk.c(972,10)
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
-      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (713:51) and jj_offset (702:9)
-      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (702:9) and jj_offset (713:51)
+      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (684:9) and jj_offset (695:51)
+      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (695:51) and jj_offset (684:9)
+      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (695:51) and jj_offset (684:9)
+      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (684:9) and jj_offset (695:51)
    LOOP END
 LOOP END
 ===========================================================================
@@ -519,28 +503,28 @@ Begin optimization report for: total_density(const t_param, t_speed *__restrict_
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at d2q9-bgk.c(997,3)
+LOOP BEGIN at d2q9-bgk.c(979,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at d2q9-bgk.c(999,5)
+   LOOP BEGIN at d2q9-bgk.c(981,5)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at d2q9-bgk.c(999,5)
-      remark #15389: vectorization support: reference cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1001,16) ]
-      remark #15389: vectorization support: reference cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1002,16) ]
-      remark #15389: vectorization support: reference cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1003,16) ]
-      remark #15389: vectorization support: reference cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1004,16) ]
-      remark #15389: vectorization support: reference cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1005,16) ]
-      remark #15389: vectorization support: reference cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1006,16) ]
-      remark #15389: vectorization support: reference cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1007,16) ]
-      remark #15389: vectorization support: reference cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1008,16) ]
-      remark #15389: vectorization support: reference cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1009,16) ]
+   LOOP BEGIN at d2q9-bgk.c(981,5)
+      remark #15389: vectorization support: reference cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(983,16) ]
+      remark #15389: vectorization support: reference cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(984,16) ]
+      remark #15389: vectorization support: reference cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(985,16) ]
+      remark #15389: vectorization support: reference cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(986,16) ]
+      remark #15389: vectorization support: reference cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(987,16) ]
+      remark #15389: vectorization support: reference cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(988,16) ]
+      remark #15389: vectorization support: reference cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(989,16) ]
+      remark #15389: vectorization support: reference cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(990,16) ]
+      remark #15389: vectorization support: reference cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(991,16) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 8
       remark #15399: vectorization support: unroll factor set to 2
       remark #15309: vectorization support: normalized vectorization overhead 1.017
-      remark #15355: vectorization support: total is float type reduction   [ d2q9-bgk.c(995,15) ]
+      remark #15355: vectorization support: total is float type reduction   [ d2q9-bgk.c(977,15) ]
       remark #15300: LOOP WAS VECTORIZED
       remark #15442: entire loop may be executed in remainder
       remark #15450: unmasked unaligned unit stride loads: 9 
@@ -551,21 +535,21 @@ LOOP BEGIN at d2q9-bgk.c(997,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at d2q9-bgk.c(999,5)
+   LOOP BEGIN at d2q9-bgk.c(981,5)
    <Remainder loop for vectorization>
-      remark #15389: vectorization support: reference cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1001,16) ]
-      remark #15389: vectorization support: reference cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1002,16) ]
-      remark #15389: vectorization support: reference cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1003,16) ]
-      remark #15389: vectorization support: reference cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1004,16) ]
-      remark #15389: vectorization support: reference cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1005,16) ]
-      remark #15389: vectorization support: reference cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1006,16) ]
-      remark #15389: vectorization support: reference cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1007,16) ]
-      remark #15389: vectorization support: reference cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1008,16) ]
-      remark #15389: vectorization support: reference cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(1009,16) ]
+      remark #15389: vectorization support: reference cells->speed0[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(983,16) ]
+      remark #15389: vectorization support: reference cells->speed1[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(984,16) ]
+      remark #15389: vectorization support: reference cells->speed2[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(985,16) ]
+      remark #15389: vectorization support: reference cells->speed3[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(986,16) ]
+      remark #15389: vectorization support: reference cells->speed4[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(987,16) ]
+      remark #15389: vectorization support: reference cells->speed5[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(988,16) ]
+      remark #15389: vectorization support: reference cells->speed6[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(989,16) ]
+      remark #15389: vectorization support: reference cells->speed7[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(990,16) ]
+      remark #15389: vectorization support: reference cells->speed8[ii+jj*params.nx] has unaligned access   [ d2q9-bgk.c(991,16) ]
       remark #15381: vectorization support: unaligned access used inside loop body
       remark #15305: vectorization support: vector length 8
       remark #15309: vectorization support: normalized vectorization overhead 2.067
-      remark #15355: vectorization support: total is float type reduction   [ d2q9-bgk.c(995,15) ]
+      remark #15355: vectorization support: total is float type reduction   [ d2q9-bgk.c(977,15) ]
       remark #15301: REMAINDER LOOP WAS VECTORIZED
       remark #15442: entire loop may be executed in remainder
       remark #15450: unmasked unaligned unit stride loads: 9 
@@ -576,7 +560,7 @@ LOOP BEGIN at d2q9-bgk.c(997,3)
       remark #15488: --- end vector cost summary ---
    LOOP END
 
-   LOOP BEGIN at d2q9-bgk.c(999,5)
+   LOOP BEGIN at d2q9-bgk.c(981,5)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
@@ -587,24 +571,24 @@ Begin optimization report for: write_values(const t_param, float *__restrict__, 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at d2q9-bgk.c(1038,3)
-   remark #15382: vectorization support: call to function fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1086,7) ]
+LOOP BEGIN at d2q9-bgk.c(1020,3)
+   remark #15382: vectorization support: call to function fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1068,7) ]
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1086:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1086:7)
-   remark #15346: vector dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1086:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1086:7)
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1068:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1068:7)
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1068:7) and call:fprintf(FILE *__restrict__, const char *__restrict__, ...) (1068:7)
 
-   LOOP BEGIN at d2q9-bgk.c(1040,5)
-      remark #15382: vectorization support: call to function fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1086,7) ]
+   LOOP BEGIN at d2q9-bgk.c(1022,5)
+      remark #15382: vectorization support: call to function fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1068,7) ]
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (1044:9) and jj_offset (1060:51)
-      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (1060:51) and jj_offset (1044:9)
-      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (1060:51) and jj_offset (1044:9)
-      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (1044:9) and jj_offset (1060:51)
+      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (1026:9) and jj_offset (1042:51)
+      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (1042:51) and jj_offset (1026:9)
+      remark #15346: vector dependence: assumed ANTI dependence between jj_offset (1042:51) and jj_offset (1026:9)
+      remark #15346: vector dependence: assumed FLOW dependence between jj_offset (1026:9) and jj_offset (1042:51)
    LOOP END
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(1099,3)
-   remark #15527: loop was not vectorized: function call to fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1101,5) ]
+LOOP BEGIN at d2q9-bgk.c(1081,3)
+   remark #15527: loop was not vectorized: function call to fprintf(FILE *__restrict__, const char *__restrict__, ...) cannot be vectorized   [ d2q9-bgk.c(1083,5) ]
 LOOP END
 ===========================================================================
 
@@ -613,11 +597,11 @@ Begin optimization report for: initialise(const char *__restrict__, const char *
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at d2q9-bgk.c(459,3) inlined into d2q9-bgk.c(819,3)
-   remark #15389: vectorization support: reference rank_p->start_row[r] has unaligned access   [ d2q9-bgk.c(461,5) ]
+LOOP BEGIN at d2q9-bgk.c(440,3) inlined into d2q9-bgk.c(801,3)
+   remark #15389: vectorization support: reference rank_p->start_row[r] has unaligned access   [ d2q9-bgk.c(442,5) ]
    remark #15381: vectorization support: unaligned access used inside loop body
-   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_p->start_row[r]>, stride is 2   [ d2q9-bgk.c(461,5) ]
-   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_p->end_row[r]>, stride is 2   [ d2q9-bgk.c(462,5) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_p->start_row[r]>, stride is 2   [ d2q9-bgk.c(442,5) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <rank_p->end_row[r]>, stride is 2   [ d2q9-bgk.c(443,5) ]
    remark #15305: vectorization support: vector length 8
    remark #15309: vectorization support: normalized vectorization overhead 0.250
    remark #15300: LOOP WAS VECTORIZED
@@ -629,33 +613,33 @@ LOOP BEGIN at d2q9-bgk.c(459,3) inlined into d2q9-bgk.c(819,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(459,3) inlined into d2q9-bgk.c(819,3)
+LOOP BEGIN at d2q9-bgk.c(440,3) inlined into d2q9-bgk.c(801,3)
 <Remainder loop for vectorization>
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(468,5) inlined into d2q9-bgk.c(819,3)
+LOOP BEGIN at d2q9-bgk.c(449,5) inlined into d2q9-bgk.c(801,3)
    remark #15344: loop was not vectorized: vector dependence prevents vectorization
-   remark #15346: vector dependence: assumed ANTI dependence between shift (470:7) and shift (474:9)
-   remark #15346: vector dependence: assumed FLOW dependence between shift (474:9) and shift (470:7)
-   remark #15346: vector dependence: assumed ANTI dependence between shift (470:7) and shift (474:9)
+   remark #15346: vector dependence: assumed ANTI dependence between shift (451:7) and shift (455:9)
+   remark #15346: vector dependence: assumed FLOW dependence between shift (455:9) and shift (451:7)
+   remark #15346: vector dependence: assumed ANTI dependence between shift (451:7) and shift (455:9)
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(468,5) inlined into d2q9-bgk.c(819,3)
+LOOP BEGIN at d2q9-bgk.c(449,5) inlined into d2q9-bgk.c(801,3)
 <Remainder>
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(876,3)
-   remark #15316: simd loop was not vectorized: scalar assignment in simd loop is prohibited, consider private, lastprivate or reduction clauses   [ d2q9-bgk.c(900,11) ]
+LOOP BEGIN at d2q9-bgk.c(858,3)
+   remark #15316: simd loop was not vectorized: scalar assignment in simd loop is prohibited, consider private, lastprivate or reduction clauses   [ d2q9-bgk.c(882,11) ]
    remark #15552: loop was not vectorized with "simd"
 
-   LOOP BEGIN at d2q9-bgk.c(878,5)
+   LOOP BEGIN at d2q9-bgk.c(860,5)
       remark #15344: loop was not vectorized: vector dependence prevents vectorization
-      remark #15346: vector dependence: assumed ANTI dependence between *cells_ptr->speed0 (881:9) and *cells_ptr->speed8[ii+jj*params->nx] (892:9)
-      remark #15346: vector dependence: assumed FLOW dependence between *cells_ptr->speed8[ii+jj*params->nx] (892:9) and *cells_ptr->speed0 (881:9)
+      remark #15346: vector dependence: assumed ANTI dependence between *cells_ptr->speed0 (863:9) and *cells_ptr->speed8[ii+jj*params->nx] (874:9)
+      remark #15346: vector dependence: assumed FLOW dependence between *cells_ptr->speed8[ii+jj*params->nx] (874:9) and *cells_ptr->speed0 (863:9)
    LOOP END
 LOOP END
 
-LOOP BEGIN at d2q9-bgk.c(917,3)
+LOOP BEGIN at d2q9-bgk.c(899,3)
    remark #15521: loop was not vectorized: loop control variable was not identified. Explicitly compute the iteration count before executing the loop or try using canonical loop form from OpenMP specification
 LOOP END
 ===========================================================================
