@@ -1,0 +1,13 @@
+-r
+/user/home/ke19697/advanced-hpc-lbm/advi_results/rank.1/mp001
+-quiet
+-zca
+/user/home/ke19697/advanced-hpc-lbm/advi_results/rank.1/loop_annotations.def
+--tool=map
+--record-stack-frame
+--sample-size=300000
+--record-mem-allocations
+--
+./d2q9-bgk
+input_1024x1024.params
+obstacles_1024x1024.dat

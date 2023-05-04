@@ -1,0 +1,6 @@
+loop_begin "/user/home/ke19697/advanced-hpc-lbm/d2q9-bgk" 0x4447 3 0x0
+loop_end "/user/home/ke19697/advanced-hpc-lbm/d2q9-bgk" 0x4954 3 0x0
+
+loop_begin "/user/home/ke19697/advanced-hpc-lbm/d2q9-bgk" 0x4b36 5 0x0
+loop_end "/user/home/ke19697/advanced-hpc-lbm/d2q9-bgk" 0x4e8f 5 0x0
+

@@ -94,7 +94,8 @@ int main(int argc, char *argv[])
   t_speed *tmp_cells = NULL; /* scratch space */
   float *tmp_data = NULL;
   int *obstacles = NULL;                                                             /* grid indicating which cells are blocked */
-  int *acc_obstacles = NULL;                                                             /* grid indicating which cells are blocked */
+  int *acc_obstacles = NULL;
+  float *send, *send1, *rec, *rec1;                                    /* grid indicating which cells are blocked */
   float *av_vals = NULL;                                                             /* a record of the av. velocity computed for each timestep */
   struct timeval timstr;                                                             /* structure to hold elapsed time */
   double tot_tic, tot_toc, init_tic, init_toc, comp_tic, comp_toc, col_tic, col_toc; /* floating point numbers to calculate elapsed wallclock time */
@@ -142,6 +143,51 @@ int main(int argc, char *argv[])
   int tag = 77;
   int work_rows = rank_p[rank].end_row - rank_p[rank].start_row;
 
+  int s,s1,r,r1;
+  if (size > 1)
+  {
+    if (rank_p[rank].start_row == params.ny - 2)
+    {
+      s = params.nx * 7;
+      send = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
+    }
+    else
+    {
+      s = params.nx * 3;
+       send = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
+    }
+    if (rank_p[rank].end_row == params.ny - 2)
+    {
+       s1 = params.nx * 7;
+      send1 = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
+    }
+    else
+    {
+      s1 = params.nx * 3;
+      send1 = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
+    }
+    if (rank_p[right].start_row == params.ny - 2)
+    {
+      r = params.nx * 7;
+      rec = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
+    }
+    else
+    {
+      r = params.nx * 3;
+      rec = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
+    }
+    if (rank_p[left].end_row == params.ny - 2)
+    {
+      r1 = params.nx * 7;
+      rec1 = (float *)_mm_malloc(sizeof(float) * params.nx * 7, 64);
+    }
+    else
+    {
+      r1 = params.nx * 3;
+      rec1 = (float *)_mm_malloc(sizeof(float) * params.nx * 3, 64);
+    }
+  }
+
   /* Init time stops here, compute time starts*/
   gettimeofday(&timstr, NULL);
   init_toc = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
@@ -163,6 +209,54 @@ int main(int argc, char *argv[])
 
     // gettimeofday(&timstr, NULL);
     // send_tic = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
+    if (size > 1) {
+      if (rank_p[rank].start_row == (params.ny - 2))
+      {
+        for (size_t i = 0; i < params.nx; i++)
+        {
+          send[i] = cells->speed1[i + params.nx]; //top row
+          send[i + params.nx] = cells->speed3[i + params.nx];
+          send[i + params.nx * 2] = cells->speed4[i + params.nx];
+          send[i + params.nx * 3] = cells->speed5[i + params.nx];
+          send[i + params.nx * 4] = cells->speed6[i + params.nx];
+          send[i + params.nx * 5] = cells->speed7[i + params.nx];
+          send[i + params.nx * 6] = cells->speed8[i + params.nx];
+        }
+      }
+      else
+      {
+        for (size_t i = 0; i < params.nx; i++)
+        {
+          send[i] = cells->speed4[i + params.nx];
+          send[i + params.nx] = cells->speed7[i + params.nx];
+          send[i + params.nx * 2] = cells->speed8[i + params.nx];
+        }
+      }
+
+      if (rank_p[rank].end_row == (params.ny - 2))
+      {
+        for (size_t i = 0; i < params.nx; i++)
+        {
+          send1[i] = cells->speed1[i + (work_rows + 1) * params.nx]; //bottom
+          send1[i + params.nx] = cells->speed2[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx * 2] = cells->speed3[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx * 3] = cells->speed5[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx * 4] = cells->speed6[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx * 5] = cells->speed7[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx * 6] = cells->speed8[i + (work_rows + 1) * params.nx];
+        }
+      }
+      else
+      {
+        for (size_t i = 0; i < params.nx; i++)
+        {
+          send1[i] = cells->speed2[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx] = cells->speed5[i + (work_rows + 1) * params.nx];
+          send1[i + params.nx * 2] = cells->speed6[i + (work_rows + 1) * params.nx];
+        }
+      }
+    }
+   
 
     // exchange halos
     // 1st exchange, even ranks sendrec right
@@ -171,23 +265,59 @@ int main(int argc, char *argv[])
     {
       if (odd_rank) //odd sends left
       {
-        MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Sendrecv(send , s , MPI_FLOAT, left, tag, rec1, r1, MPI_FLOAT, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       } else if (!odd_rank && rank != size-1) { //if last rank number is even don't try and receive from the right yet
-        MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Sendrecv(send1, s1, MPI_FLOAT, right, tag, rec, r, MPI_FLOAT, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       }
       if (!odd_rank && !(rank==0 && even_size)) {
-        MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Sendrecv(send, s, MPI_FLOAT, left, tag, rec1, r1, MPI_FLOAT, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
       } else if (odd_rank) {  //if last rank number is even don't try and receive from the right yet
-        MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-      } 
+        MPI_Sendrecv(send1, s1, MPI_FLOAT, right, tag, rec, r, MPI_FLOAT, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+      }
       if (even_size) {
         if (rank==0) {
-          MPI_Sendrecv(&cells->speed0[params.nx], 1, speed_rows, left, tag, &cells->speed0[0], 1, speed_rows, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+          MPI_Sendrecv(send, s, MPI_FLOAT, left, tag, rec1, r1, MPI_FLOAT, left, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
         else if (rank == size - 1)
         {
-          MPI_Sendrecv(&cells->speed0[(work_rows + 1) * params.nx], 1, speed_rows, right, tag, &cells->speed0[(work_rows + 2) * params.nx], 1, speed_rows, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+          MPI_Sendrecv(send1, s1, MPI_FLOAT, right, tag, rec, r, MPI_FLOAT, right, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
+      }
+    }
+    for (size_t i = 0; i < params.nx; i++)
+    {
+      if (rank_p[rank].end_row + 1 == params.ny - 2)
+      {
+        cells->speed1[i + (work_rows + 2) * params.nx] = rec[i];
+        cells->speed3[i + (work_rows + 2) * params.nx] = rec[i + params.nx];
+        cells->speed4[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 2];
+        cells->speed5[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 3];
+        cells->speed6[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 4];
+        cells->speed7[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 5];
+        cells->speed8[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 6];
+      }
+      else
+      {
+        cells->speed4[i + (work_rows + 2) * params.nx] = rec[i];
+        cells->speed7[i + (work_rows + 2) * params.nx] = rec[i + params.nx];
+        cells->speed8[i + (work_rows + 2) * params.nx] = rec[i + params.nx * 2];
+      }
+
+      if (rank_p[rank].start_row - 1 == params.ny - 2)
+      {
+        cells->speed1[i] = rec1[i];
+        cells->speed2[i] = rec1[i + params.nx];
+        cells->speed3[i] = rec1[i + params.nx * 2];
+        cells->speed5[i] = rec1[i + params.nx * 3];
+        cells->speed6[i] = rec1[i + params.nx * 4];
+        cells->speed7[i] = rec1[i + params.nx * 5];
+        cells->speed8[i] = rec1[i + params.nx * 6];
+      }
+      else
+      {
+        cells->speed2[i] = rec1[i];
+        cells->speed5[i] = rec1[i + params.nx];
+        cells->speed6[i] = rec1[i + params.nx * 2];
       }
     }
 
@@ -270,6 +400,10 @@ int main(int argc, char *argv[])
       cells_all = NULL;
       _mm_free(obstacles_all);
       obstacles_all = NULL;
+      _mm_free(send);
+      _mm_free(send1);
+      _mm_free(rec);
+      _mm_free(rec1);
     }
   }
   MPI_Finalize();

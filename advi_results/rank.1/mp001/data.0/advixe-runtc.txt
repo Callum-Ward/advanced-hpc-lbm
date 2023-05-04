@@ -1,0 +1,14 @@
+
+=== Start: [2023/04/29 01:18:41] === 
+Analysis started...
+Result file: /user/home/ke19697/advanced-hpc-lbm/advi_results/rank.1/mp001/mp001.advixe 
+Error: An internal error has occurred. Our apologies for this inconvenience. Please gather a description of the steps leading up to the problem and contact the Intel customer support team.
+Found target process /user/home/ke19697/advanced-hpc-lbm/d2q9-bgk (PID = 4926). Analysis started... 
+Error: Internal error. Please contact Intel customer support team. 
+Error: Analysis terminated abnormally. 
+Process /user/home/ke19697/advanced-hpc-lbm/d2q9-bgk (PID = 4926) has terminated. 
+Warning: No SITE annotations were encountered, so no stride/alignment data can be reported. 
+Application exit code: 255 
+Result file: /user/home/ke19697/advanced-hpc-lbm/advi_results/rank.1/mp001/mp001.advixe 
+Analysis completed
+=== End: [2023/04/29 01:18:44] === 

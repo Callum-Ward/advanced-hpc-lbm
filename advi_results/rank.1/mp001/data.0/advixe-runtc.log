@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<log version="1.0" tool="runtool">
+
+<msg id="1" tool="runtool">
+  <type>log-start</type>
+  <arg>2023/04/29 01:18:41</arg>
+</msg>
+<msg id="2" tool="runtool">
+  <type>collector-starts</type>
+</msg>
+<msg id="3" tool="runtool">
+  <type>marker-file</type>
+  <arg>/user/home/ke19697/advanced-hpc-lbm/advi_results/rank.1/mp001/mp001.advixe</arg>
+</msg>
+<msg id="4" tool="pin">
+  <type>2</type>
+  <description>Source/pin/vm_u/vm_signal_impl_unix.cpp: NotifyExit: 2102: assertion failed: _initialized </description>
+  <severity>ERROR</severity>
+  <timestamp>Sat Apr 29 00:18:41 2023 </timestamp>
+  <pinversion>3.14</pinversion>
+  <kitnumber>98223</kitnumber>
+</msg>
+<msg id="5" tool="tc">
+  <type>START</type>
+  <severity>INFO</severity>
+  <timestamp>Sat Apr 29 00:18:41 2023</timestamp>
+</msg>
+<msg id="6" tool="tc">
+  <type>EXEC_OF_INTEREST</type>
+  <arg>/user/home/ke19697/advanced-hpc-lbm/d2q9-bgk</arg>
+  <arg>4926</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Apr 29 00:18:41 2023</timestamp>
+</msg>
+<msg id="7" tool="tc">
+  <type>INTERNAL</type>
+  <severity>ERROR</severity>
+  <timestamp>Sat Apr 29 00:18:41 2023</timestamp>
+</msg>
+<msg id="8" tool="tc">
+  <type>ABNORMAL_TERMINATE</type>
+  <severity>ERROR</severity>
+  <timestamp>Sat Apr 29 00:18:41 2023</timestamp>
+</msg>
+<msg id="9" tool="tc">
+  <type>PROCESS_TERMINATE</type>
+  <arg>/user/home/ke19697/advanced-hpc-lbm/d2q9-bgk</arg>
+  <arg>4926</arg>
+  <severity>INFO</severity>
+  <timestamp>Sat Apr 29 00:18:41 2023</timestamp>
+</msg>
+<msg id="10" tool="tc">
+  <type>NO_ANNOTATIONS</type>
+  <severity>WARNING</severity>
+  <timestamp>Sat Apr 29 00:18:41 2023</timestamp>
+</msg>
+<msg id="11" tool="tc">
+  <type>ANALYSIS_COMPLETE</type>
+  <severity>INFO</severity>
+  <timestamp>Sat Apr 29 00:18:41 2023</timestamp>
+</msg>
+<msg id="12" tool="tc">
+  <type>STOP</type>
+  <severity>INFO</severity>
+  <timestamp>Sat Apr 29 00:18:41 2023</timestamp>
+</msg>
+<msg id="13" tool="runtool">
+  <type>app-exit-code</type>
+  <arg>255</arg>
+</msg>
+<msg id="14" tool="runtool">
+  <type>marker-file</type>
+  <arg>/user/home/ke19697/advanced-hpc-lbm/advi_results/rank.1/mp001/mp001.advixe</arg>
+</msg>
+<msg id="15" tool="runtool">
+  <type>collector-done</type>
+</msg>
+<msg id="16" tool="runtool">
+  <type>log-end</type>
+  <arg>2023/04/29 01:18:44</arg>
+</msg>
+
+</log>
+
