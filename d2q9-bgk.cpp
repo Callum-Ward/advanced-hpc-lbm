@@ -90,8 +90,7 @@ int main(int argc, char *argv[])
   t_param params;                                                                    /* struct to hold parameter values */
   t_speed *cells = NULL;                                                             /* grid containing fluid densities */
   t_speed *tmp_cells = NULL;                                                         /* scratch space */
-  int *obstacles = NULL;
-  int obsCount =0;                                                             /* grid indicating which cells are blocked */
+  int *obstacles = NULL;                                                          /* grid indicating which cells are blocked */
   float *av_vels = NULL;                                                             /* a record of the av. velocity computed for each timestep */
   struct timeval timstr;                                                             /* structure to hold elapsed time */
   double tot_tic, tot_toc, init_tic, init_toc, comp_tic, comp_toc, col_tic, col_toc; /* floating point numbers to calculate elapsed wallclock time */
@@ -113,7 +112,7 @@ int main(int argc, char *argv[])
   initialise(paramfile, obstaclefile, &params, &cells, &tmp_cells, &obstacles, &av_vels);
 
   const int obs_count = std::transform_reduce(std::execution::par, &obstacles[0], &obstacles[params.nx*params.ny], 0, std::plus<int>(), [=](int x) { return x == 0 ? 1 : 0;});
-  std::cout << "obs_count: " << obs_count << std::endl;
+
   /* Init time stops here, compute time starts*/
   gettimeofday(&timstr, NULL);
   init_toc = timstr.tv_sec + (timstr.tv_usec / 1000000.0);
@@ -204,10 +203,7 @@ int accelerate_flow(const t_param params, t_speed *__restrict__ cells, int *__re
   return EXIT_SUCCESS;
 }
 
-const float c_sq = 1.f / 3.f; /* square of speed of sound */
 const float w0 = 4.f / 9.f;   /* weighting factor */
-const float w1 = 1.f / 9.f;   /* weighting factor */
-const float w2 = 1.f / 36.f;  /* weighting factor */
 
 float collision(const t_param params, t_speed *__restrict__ cells, t_speed *__restrict__ tmp_cells, int *__restrict__ obstacles)
 {
