@@ -9,7 +9,8 @@
 #include <algorithm>
 #include <ranges>
 #include <vector>
-#include <thread>
+#include <thread> 
+#include <execution>
 #include <mutex>
 #include "/usr/include/experimental/mdspan"
 #include "./algos_include/cartesian_product.hpp"
@@ -76,7 +77,7 @@ float total_density(const t_param params, t_speed *__restrict__ cells);
 float av_velocity(const t_param params, t_speed *__restrict__ cells, int *__restrict__ obstacles);
 
 /* calculate Reynolds number */
-float calc_reynolds(const t_param params, t_speed *__restrict__ cells, int *__restrict__ obstacles, int obs_count);
+float calc_reynolds(const t_param params, t_speed *__restrict__ cells, int *__restrict__ obstacles);
 
 /* utility functions */
 void die(const char *message, const int line, const char *file);
@@ -147,7 +148,7 @@ int main(int argc, char *argv[])
 
   /* write final values and free memory */
   printf("==done==\n");
-  printf("Reynolds number:\t\t%.12E\n", calc_reynolds(params, cells, obstacles, obs_count));
+  printf("Reynolds number:\t\t%.12E\n", calc_reynolds(params, cells, obstacles));
   printf("Elapsed Init time:\t\t\t%.6lf (s)\n", init_toc - init_tic);
   printf("Elapsed Compute time:\t\t\t%.6lf (s)\n", comp_toc - comp_tic);
   printf("Elapsed Collate time:\t\t\t%.6lf (s)\n", col_toc - col_tic);
@@ -180,7 +181,7 @@ float timestep(const t_param params, t_speed *__restrict__ cells, t_speed *__res
     thread.join();
   }
 
-  return std::accumulate(res.begin(), res.end(), 0);
+  return std::accumulate(res.begin(), res.end(), 0.f);
 
 }
 
@@ -240,17 +241,17 @@ float collision(const t_param params, const int start, const int end, t_speed *_
     for (int ii = 0; ii < params.nx; ii++)
     {
 
-      register const int x_e = (ii == params.nx - 1) ? (0) : (ii + 1);
-      register const int x_w = (ii == 0) ? (ii + params.nx - 1) : (ii - 1);
-      register float speed5 = cells->speed5[x_w + y_s * params.nx]; /* north-east */
-      register float speed2 = cells->speed2[ii + y_s * params.nx];  /* north */
-      register float speed6 = cells->speed6[x_e + y_s * params.nx]; /* north-west */
-      register float speed1 = cells->speed1[x_w + jj * params.nx];  /* east */
-      register float speed0 = cells->speed0[ii + jj * params.nx];   /* central cell, no movement */
-      register float speed3 = cells->speed3[x_e + jj * params.nx];  /* west */
-      register float speed8 = cells->speed8[x_w + y_n * params.nx]; /* south-east */
-      register float speed4 = cells->speed4[ii + y_n * params.nx];  /* south */
-      register float speed7 = cells->speed7[x_e + y_n * params.nx]; /* south-west */
+       const int x_e = (ii == params.nx - 1) ? (0) : (ii + 1);
+       const int x_w = (ii == 0) ? (ii + params.nx - 1) : (ii - 1);
+       float speed5 = cells->speed5[x_w + y_s * params.nx]; /* north-east */
+       float speed2 = cells->speed2[ii + y_s * params.nx];  /* north */
+       float speed6 = cells->speed6[x_e + y_s * params.nx]; /* north-west */
+       float speed1 = cells->speed1[x_w + jj * params.nx];  /* east */
+       float speed0 = cells->speed0[ii + jj * params.nx];   /* central cell, no movement */
+       float speed3 = cells->speed3[x_e + jj * params.nx];  /* west */
+       float speed8 = cells->speed8[x_w + y_n * params.nx]; /* south-east */
+       float speed4 = cells->speed4[ii + y_n * params.nx];  /* south */
+       float speed7 = cells->speed7[x_e + y_n * params.nx]; /* south-west */
 
       /* don't consider occupied cells */
       if (obstacles[ii + jj * params.nx])
@@ -267,18 +268,18 @@ float collision(const t_param params, const int start, const int end, t_speed *_
       else
       {
         /* compute local density total */
-        register const float local_density = speed0 + speed1 + speed2 + speed3 + speed4 + speed5 + speed6 + speed7 + speed8;
-        register const float inv_den = 1 / local_density;
-        register const float u_x = inv_den * (speed1 + speed5 + speed8 - (speed3 + speed6 + speed7));
-        register const float u_y = inv_den * (speed2 + speed5 + speed6 - (speed4 + speed7 + speed8));
-        register const float u_sq = u_x * u_x + u_y * u_y;
+         const float local_density = speed0 + speed1 + speed2 + speed3 + speed4 + speed5 + speed6 + speed7 + speed8;
+         const float inv_den = 1 / local_density;
+         const float u_x = inv_den * (speed1 + speed5 + speed8 - (speed3 + speed6 + speed7));
+         const float u_y = inv_den * (speed2 + speed5 + speed6 - (speed4 + speed7 + speed8));
+         const float u_sq = u_x * u_x + u_y * u_y;
 
         /* equilibrium densities */
         float d_equ;
-        register const float sub = u_sq * 1.5f;
-        register const float w0d = local_density * w0;
-        register const float w1d = w0d * 0.25f;
-        register const float w2d = w1d * 0.25f;
+         const float sub = u_sq * 1.5f;
+         const float w0d = local_density * w0;
+         const float w1d = w0d * 0.25f;
+         const float w2d = w1d * 0.25f;
         /* zero velocity density: weight w0 */
         d_equ = w0d * (1.f - 1.5f * u_sq);
         speed0 = speed0 + params.omega * (d_equ - speed0);
@@ -614,11 +615,11 @@ int finalise(const t_param *params, t_speed **__restrict__ cells_ptr, t_speed **
   return EXIT_SUCCESS;
 }
 
-float calc_reynolds(const t_param params, t_speed *__restrict__ cells, int *__restrict__ obstacles, int obs_count)
+float calc_reynolds(const t_param params, t_speed *__restrict__ cells, int *__restrict__ obstacles)
 {
   const float viscosity = 1.f / 6.f * (2.f / params.omega - 1.f);
 
-  return av_velocity(params, cells, obstacles) * params.reynolds_dim / (viscosity * obs_count);
+  return av_velocity(params, cells, obstacles) * params.reynolds_dim / viscosity;
 }
 
 float total_density(const t_param params, t_speed *__restrict__ cells)
